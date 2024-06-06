@@ -1,6 +1,9 @@
 package logica;
 import java.util.ArrayList;
-public class Vehiculo {
+import simuladortransito.Transitable;
+
+
+public class Vehiculo implements Transitable {
 
 	private String patente;
 
@@ -14,10 +17,8 @@ public class Vehiculo {
         this.patente = patente;
         this.tipoVehiculo = tipoVehiculo;
         this.propietario = propietario;
-        this.etiquetas = etiquetas;
+        this.etiquetas = new ArrayList();
     }
-
-        
         
     public String getPatente() {
         return patente;
@@ -33,6 +34,22 @@ public class Vehiculo {
 
     public ArrayList<Etiqueta> getEtiquetas() {
         return etiquetas;
+    }
+    
+
+    @Override
+    public boolean esDiscapacitado() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public boolean esElectrico() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public boolean esEmpleado() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }

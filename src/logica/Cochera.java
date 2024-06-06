@@ -1,9 +1,10 @@
 package logica;
 import java.util.ArrayList;
+import simuladortransito.Estacionable;
 
-public class Cochera {
+public class Cochera implements Estacionable{
 
-	private int codigo;
+	private String codigo;
 
 	private Estadia estadiaActual;
 
@@ -12,7 +13,7 @@ public class Cochera {
 	private ArrayList<Estadia> estadias;
 	private Parking parking;
 
-    public Cochera(int codigo, ArrayList<Etiqueta> etiquetas, Parking parking) {
+    public Cochera(String codigo, ArrayList<Etiqueta> etiquetas, Parking parking) {
         this.codigo = codigo;
         this.etiquetas = etiquetas;
         this.parking = parking;
@@ -49,7 +50,7 @@ public class Cochera {
 	       setEstadiaActual(null);
 	}
 
-    public int getCodigo() {
+    public String getCodigo() {
         return codigo;
     }
 
@@ -67,6 +68,21 @@ public class Cochera {
 
     public Parking getParking() {
         return parking;
+    }
+
+    @Override
+    public boolean esDiscapacitado() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public boolean esElectrico() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public boolean esEmpleado() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }

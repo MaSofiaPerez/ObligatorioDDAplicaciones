@@ -1,9 +1,9 @@
 package logica;
 
-import iu.CalculoMula;
+import interfaces.CalculoMulta;
 
 
-    public class TipoDeMultaEmpleadosInterno implements CalculoMula {
+    public class TipoDeMultaEmpleadosInterno implements CalculoMulta {
 
         @Override
 	public double calcularmulta(Estadia estadia) {

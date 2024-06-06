@@ -1,14 +1,14 @@
 package logica;
 
-import iu.CalculoMula;
+import interfaces.CalculoMulta;
 
 public class Multa {
 
-	private CalculoMula calucloMultas;
+	private CalculoMulta calucloMultas;
 
 	private TipoDeMultaDiscapacitado tipoDeMultaDiscapacitado;
 
-	private CalculoMula calculoMula;
+	private CalculoMulta calculoMula;
 
 	public double calcularmulta(Estadia estadia) {
 		return 0;

@@ -7,7 +7,7 @@ public class Etiqueta {
 	 * electrico
 	 * empleado
 	 */
-	private String descripcion;
+    private String descripcion;
 
     public Etiqueta(String descripcion) {
         this.descripcion = descripcion;

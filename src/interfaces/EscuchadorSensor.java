@@ -1,4 +1,4 @@
-package iu;
+package interfaces;
 
 public interface EscuchadorSensor {
 

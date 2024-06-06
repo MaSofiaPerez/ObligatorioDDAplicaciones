@@ -1,12 +1,12 @@
 package logica;
 
-import iu.EscuchadorSensor;
+import interfaces.EscuchadorSensor;
 import java.util.Date;
 import java.util.ArrayList;
 
 
 public class Parking implements EscuchadorSensor{
-
+    
 	private double factorDeDemanda;
 
 	private String nombre;
@@ -22,9 +22,12 @@ public class Parking implements EscuchadorSensor{
 	private ArrayList <Tarifario> tarifarios;
 
         private ArrayList<Cochera> cocheras;
-	private Sensor sensor;
-
-	private Fachada fachada;
+	
+	private Fachada fachada = Fachada.getInstancia();
+        
+        public Parking(){
+            
+        }
 
     public double getFactorDeDemanda() {
         return factorDeDemanda;
@@ -39,9 +42,9 @@ public class Parking implements EscuchadorSensor{
     }
 
 	
-	public Cochera getCochera(int codigo) {
+	public Cochera getCochera(String codigo) {
 		for(Cochera c: cocheras){
-	  if(c.getCodigo() == codigo){
+	  if(c.getCodigo().equals(codigo)){
 	       
               return c;
 	   }
@@ -120,7 +123,7 @@ public class Parking implements EscuchadorSensor{
          Cochera cochera;
              int codigo=Integer.parseInt(codCochera);
             cochera = cocheras.stream()
-                    .filter(c -> c.getCodigo() == codigo)
+                    .filter(c -> c.getCodigo().equals(codigo))
                     .findFirst()
                     .orElse(null);
 	  if(cochera != null){
@@ -161,7 +164,7 @@ public class Parking implements EscuchadorSensor{
              Cochera cochera;
              int codigo=Integer.parseInt(codCochera);
             cochera = cocheras.stream()
-                    .filter(c -> c.getCodigo() == codigo)
+                    .filter(c -> c.getCodigo().equals(codigo))
                     .findFirst()
                     .orElse(null);
 	  

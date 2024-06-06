@@ -1,9 +1,9 @@
-package iu;
+package interfaces;
 
 import logica.Estadia;
 
 
-public interface CalculoMula {
+public interface CalculoMulta {
 
 	public double calcularmulta(Estadia estadia);
 }
