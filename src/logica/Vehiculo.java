@@ -13,10 +13,11 @@ public class Vehiculo implements Transitable {
 
 	private ArrayList<Etiqueta> etiquetas;
 
-    public Vehiculo(String patente, TipoVehiculo tipoVehiculo, Propietario propietario, ArrayList<Etiqueta> etiquetas) {
+    public Vehiculo(String patente, TipoVehiculo tipoVehiculo, Propietario propietario) {
         this.patente = patente;
         this.tipoVehiculo = tipoVehiculo;
         this.propietario = propietario;
+        propietario.agregarVehiculo(this);
         this.etiquetas = new ArrayList();
     }
         
@@ -31,9 +32,14 @@ public class Vehiculo implements Transitable {
     public Propietario getPropietario() {
         return propietario;
     }
+    
 
     public ArrayList<Etiqueta> getEtiquetas() {
         return etiquetas;
+    }
+    
+    public void addEtiqueta(Etiqueta e){
+        etiquetas.add(e);
     }
     
 

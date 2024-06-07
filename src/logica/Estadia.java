@@ -1,31 +1,48 @@
 package logica;
+
 import java.util.ArrayList;
 import java.util.Date;
+
 public class Estadia {
 
-	private Date fechaYHoraEntrada;
+    private Date fechaYHoraEntrada;
 
-	private Date fechaYHoraSalida;
+    private Date fechaYHoraSalida;
 
-	private double totalFacturado;
+    private double totalFacturado;
 
-	private Vehiculo vehiculo;
-        private Cochera cochera;
+    private Vehiculo vehiculo;
 
-	private ArrayList<Anomalia> anomalias;
+    private Cochera cochera;
 
-        private ArrayList<Estadia> estadiasfinañizadas;
+    private ArrayList<Anomalia> anomalias;
+
+    private ArrayList<Estadia> estadiasfinalizadas;
+
+    private ArrayList<Multa> multas;
+
     public Estadia(Vehiculo vehiculo, Cochera cochera) {
         this.vehiculo = vehiculo;
         this.cochera = cochera;
+        this.fechaYHoraEntrada = new Date();
+        this.multas = new ArrayList();
+        this.totalFacturado = 0;
     }
 
     public Date getFechaYHoraEntrada() {
         return fechaYHoraEntrada;
     }
 
+    public void setFechaYHoraEntrada(Date nueva) {
+        this.fechaYHoraEntrada = nueva;
+    }
+
     public Date getFechaYHoraSalida() {
         return fechaYHoraSalida;
+    }
+
+    public void setFechaYHoraSalida(Date nueva) {
+        this.fechaYHoraSalida = nueva;
     }
 
     public double getTotalFacturado() {
@@ -36,6 +53,10 @@ public class Estadia {
         return vehiculo;
     }
 
+    public void setVehiculo(Vehiculo v) {
+        this.vehiculo = v;
+    }
+
     public Cochera getCochera() {
         return cochera;
     }
@@ -44,104 +65,72 @@ public class Estadia {
         return anomalias;
     }
 
-	
-	public void procesarEgreso() {
-         TipoVehiculo  tipoVehiculo = vehiculo.getTipoVehiculo();
-	  Parking p = cochera.getParking();
-	  ArrayList<Tarifario> tarifarios = p.getTarifarios();
-	  double tarifario = 0;
-	  for(Tarifario t: tarifarios){
-	  if(t.getTipoVehiculo()== tipoVehiculo){
-	  tarifario = t.getValorHora();
-	  }
-	}
-          double multas=calcularMulta();
-          long tiempoestadiaMinutos=CalcularTiempoEstadiaEnMinutos();
-	  double montoFacturado= calcularTotalFacturado(tiempoestadiaMinutos,tarifario,multas);
-	  this.totalFacturado = montoFacturado;
-	  cochera.setEstadiaActual(null);
-	  debitarCuentaCorrientePropietario(montoFacturado);
+    public ArrayList<Multa> getMultas() {
+        return multas;
+    }
+
+    public void procesarEgreso() {
+        TipoVehiculo tipoVehiculo = vehiculo.getTipoVehiculo();
+        Parking p = cochera.getParking();
+        ArrayList<Tarifario> tarifarios = p.getTarifarios();
+        double tarifario = 0;
+        for (Tarifario t : tarifarios) {
+            if (t.getTipoVehiculo() == tipoVehiculo) {
+                tarifario = t.getValorHora();
+            }
         }
-	
-	public void setFechaYHoraEntrada() {
-         fechaYHoraEntrada = new Date();
-	}
+        double tiempoestadiaMinutos = CalcularTiempoEstadiaEnMinutos();
+        double montoFacturado = calcularTotalFacturado(tiempoestadiaMinutos, tarifario);
+        this.totalFacturado = montoFacturado;
+        cochera.setEstadiaActual(null);
+        debitarCuentaCorrientePropietario(montoFacturado);
+    }
 
-	
-	public double calcularMulta() {
-		 double valorMulta;
-            ArrayList<Double> totalDelasMultas=null;     
-	  ArrayList<Etiqueta> listaEtiquetasMula = null;
-	  if(cochera.getEtiquetas() != null && vehiculo.getEtiquetas() != null){
-	 
-	  for (Etiqueta eVehiculo: vehiculo.getEtiquetas()){
-	  if(!cochera.tieneEtiqueta(eVehiculo.getDescripcion())){
-	  listaEtiquetasMula.add(eVehiculo);
-	  }            
-	}
-         
-           
-          for(Etiqueta m:listaEtiquetasMula){
-              switch (m.getDescripcion()) {
-                  case "discapacitados":
-                       TipoDeMultaDiscapacitado multaDiscapacitado = null; 
-                     Estadia estadia1=cochera.getEstadiaActual();
-                     totalDelasMultas.add(multaDiscapacitado.calcularmulta(estadia1));
-                      break;
-                case "electricos":
-                     TipoDeMultaElectrico multaElectrico = null; 
-                    Estadia estadia2=cochera.getEstadiaActual();
-                     totalDelasMultas.add(multaElectrico.calcularmulta(estadia2));
-                      break;
-                   case "empleadosInternos":
-                     TipoDeMultaEmpleadosInterno multaEmpleadosInterno = null; 
-                     Estadia estadia3=cochera.getEstadiaActual();
-                     totalDelasMultas.add(multaEmpleadosInterno.calcularmulta(estadia3));
-                      break;    
-              }
-          }
-       double totaldeMultas=0;
-       for(Double numero:totalDelasMultas){
-       totaldeMultas+=numero;
-       }
-       return totaldeMultas;
-          }
-        return -1;
+    public void setFechaYHoraEntrada() {
+        fechaYHoraEntrada = new Date();
+    }
+
+    public void agregarMulta() {
+
+        for (Etiqueta eCochera : cochera.getEtiquetas()) {
+            for (Etiqueta eVehiculo : vehiculo.getEtiquetas()) {
+                if (eCochera != eVehiculo) {
+                    multas.add(new Multa());
+                }
+            }
         }
-	private long CalcularTiempoEstadiaEnMinutos() {
-		long diferenciaTiempo = fechaYHoraSalida.getTime() - fechaYHoraEntrada.getTime();
-	  
-	  return diferenciaTiempo / (60*1000);
-	}
 
-	/**
-	 * vehiculo.getPropietario().pagarEstadia(monto);
-	 */
-	private void debitarCuentaCorrientePropietario(double montoFacturado) {
-          vehiculo.getPropietario().pagarEstadia(montoFacturado);
-	}
+    }
 
-	/**
-	 * (PB*UT*FD)+M
-	 * (tarifario*UT*factorDemanda)+multa
-	 */
-	private double calcularTotalFacturado(long tiempoEstadia,double tarifa,double multas) {
-		return tarifa*tiempoEstadia*cochera.getParking().getFactorDeDemanda()+multas;
-	}
+    public double calcularMultas() {
+        double total = 0;
+        for (Multa m : multas) {
+            total += m.calcularMulta(this);
+        }
+        return total;
+    }
 
-public double calcularSubTotalFacturado() {
-double tiempo=	CalcularTiempoEstadiaEnMinutos();
-double tarifa=cochera.getParking().getTarifario(vehiculo.getTipoVehiculo());
-    return tarifa*tiempo*cochera.getParking().getFactorDeDemanda();
-	}
-	public void setFechaYHoraSalida() {
-           fechaYHoraSalida = new Date();
-	}
+    public double CalcularTiempoEstadiaEnMinutos() {
+        long diferenciaTiempo = fechaYHoraSalida.getTime() - fechaYHoraEntrada.getTime();
+        return diferenciaTiempo / (60 * 1000);
+    }
 
-	
-        
-	public void agregarAnomalia(Anomalia anomalia) {
-           anomalias.add(anomalia);
-	}
+    private void debitarCuentaCorrientePropietario(double montoFacturado) {
+        vehiculo.getPropietario().pagarEstadia(montoFacturado);
+    }
+
+    private double calcularTotalFacturado(double tiempoEstadia, double tarifa) {
+        return (tarifa * tiempoEstadia * cochera.getParking().getFactorDeDemanda()) + calcularMultas();
+    }
+
+    public double calcularSubTotalFacturado() {
+        double tiempo = CalcularTiempoEstadiaEnMinutos();
+        double tarifa = cochera.getParking().getTarifario(vehiculo.getTipoVehiculo());
+        return tarifa * tiempo * cochera.getParking().getFactorDeDemanda();
+    }
+
+    public void agregarAnomalia(Anomalia anomalia) {
+        anomalias.add(anomalia);
+    }
 
 }

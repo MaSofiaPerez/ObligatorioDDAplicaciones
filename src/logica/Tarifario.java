@@ -2,16 +2,13 @@ package logica;
 
 public class Tarifario {
 
-	/**
-	 * 0.05 motos
-	 * 0.1 resto
-	 */
-	private double valorHora;
+    private double valorHora;
 
-	private TipoVehiculo tipoVehiculo;
+    private TipoVehiculo tipoVehiculo;
 
-    public Tarifario(TipoVehiculo tipoVehiculo) {
+    public Tarifario(TipoVehiculo tipoVehiculo, double valorHora) {
         this.tipoVehiculo = tipoVehiculo;
+        this.valorHora = valorHora;
     }
 
     public TipoVehiculo getTipoVehiculo() {
@@ -21,9 +18,5 @@ public class Tarifario {
     public double getValorHora() {
         return valorHora;
     }
-
-   
-        
-    
 
 }

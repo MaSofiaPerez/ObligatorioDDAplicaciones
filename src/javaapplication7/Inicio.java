@@ -4,6 +4,7 @@
  */
 package javaapplication7;
 
+import iu.DatosPrueba;
 import java.util.ArrayList;
 import logica.Cochera;
 import logica.Fachada;
@@ -16,22 +17,17 @@ import simuladortransito.Sensor;
 import simuladortransito.SimuladorTransito;
 import simuladortransito.Transitable;
 import logica.SensorParking;
-
+import iu.DatosPrueba;
 /**
  *
  * @author sofia
  */
-public class JavaApplication7 {
+public class Inicio {
     
     private static SimuladorTransito simulador;
-    
-    
 
-    /**privat 
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
-        // TODO code application logic here
+        DatosPrueba.iniciar();
         //1. Configurar simulador
         ArrayList<Transitable> vehiculos = generarVehiculos(10);
         ArrayList<Estacionable> cocheras = generarCocheras(5);
@@ -61,11 +57,12 @@ public class JavaApplication7 {
     }
     
     private static ArrayList<Estacionable> generarCocheras(int cantidad){
-        Parking parking = new Parking();
-        ArrayList<Cochera> cocheras = parking.getCocheras();        
+        Fachada fachada = Fachada.getInstancia();
         ArrayList<Estacionable> ret = new ArrayList<>();
-        for(int i = 0; i < cantidad && i < cocheras.size(); i++){
-            ret.add(cocheras.get(i));
+        for(Parking p: fachada.getParkings()){
+            for(Cochera c: p.getCocheras()){
+                ret.add(c);
+            }
         }
         return ret; 
     }

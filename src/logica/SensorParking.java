@@ -1,45 +1,35 @@
 package logica;
+
 import interfaces.EscuchadorSensor;
 import java.util.ArrayList;
 import simuladortransito.Estacionable;
 import simuladortransito.Sensor;
 import simuladortransito.Transitable;
 
+public class SensorParking implements Sensor {
 
-public class SensorParking implements Sensor{
+    Parking parking;
 
-	private ArrayList<EscuchadorSensor> escuchadoresSensor;
-         
-	/**
-	 * for(EscuchadorSensor escuchador: escuchadores){
-	 * e.ingreso(vehiculo, cochera)
-	 * }
-	 */
-	public void avisarIngreso(String patente, String codigoCochera) {
+    public void avisarIngreso(Vehiculo v, Cochera c) {
+        parking.agregarEstadia(v, c);
+    }
 
-	}
-
-	public void avisarEgreso(String patente, String codigoCochera) {
-
-	}
-
-	public void add(EscuchadorSensor escuchador) {
-
-	}
-
-	public void remove(EscuchadorSensor escuchador) {
-
-	}
+    public void avisarEgreso(Vehiculo v, Cochera c) {
+        parking.cerrarEstadia(v, c);
+    }
 
     @Override
     public void ingreso(Transitable transitable, Estacionable estacionable) {
-        
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Vehiculo v = (Vehiculo) transitable;
+        Cochera c = (Cochera) estacionable;
+        avisarIngreso(v, c);
     }
 
     @Override
     public void egreso(Transitable transitable, Estacionable estacionable) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Vehiculo v = (Vehiculo) transitable;
+        Cochera c = (Cochera) estacionable;
+        avisarEgreso(v, c);
     }
 
 }

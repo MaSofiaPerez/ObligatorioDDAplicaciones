@@ -4,30 +4,33 @@ import interfaces.EscuchadorSensor;
 import java.util.Date;
 import java.util.ArrayList;
 
+public class Parking {
 
-public class Parking implements EscuchadorSensor{
-    
-	private double factorDeDemanda;
+    private double factorDeDemanda = 1;
 
-	private String nombre;
+    private String nombre;
 
-	private String direccion;
+    private String direccion;
 
-	private Date fechaYHora;
+    private Date ultimaActualizacion;
 
-	private int ingresosVehiculo;
+    private int ingresosVehiculo;
 
-	private int egresoVehiculo;
+    private int egresosVehiculo;
 
-	private ArrayList <Tarifario> tarifarios;
+    private ArrayList<Tarifario> tarifarios;
 
-        private ArrayList<Cochera> cocheras;
-	
-	private Fachada fachada = Fachada.getInstancia();
-        
-        public Parking(){
-            
+    private ArrayList<Cochera> cocheras;
+
+    public Parking(String nombre, String direccion) {
+        this.nombre = nombre;
+        this.direccion = direccion;
+        this.cocheras = new ArrayList();
+        this.tarifarios = new ArrayList();
+        for(Cochera c: cocheras){
+            c.setParking(this);
         }
+    }
 
     public double getFactorDeDemanda() {
         return factorDeDemanda;
@@ -37,163 +40,131 @@ public class Parking implements EscuchadorSensor{
         return tarifarios;
     }
 
+    public void setTarifarios(ArrayList<Tarifario> tarifarios) {
+        this.tarifarios = tarifarios;
+    }
+
     public ArrayList<Cochera> getCocheras() {
         return cocheras;
     }
+    
+    public void setCocheras(ArrayList<Cochera> cocheras){
+        this.cocheras = cocheras;
+    }
 
-	
-	public Cochera getCochera(String codigo) {
-		for(Cochera c: cocheras){
-	  if(c.getCodigo().equals(codigo)){
-	       
-              return c;
-	   }
-        
+    public double getTarifario(TipoVehiculo tipo) {
+        for (Tarifario f : tarifarios) {
+            if (f.getTipoVehiculo().equals(tipo)) {
+                return f.getValorHora();
+            }
+        }
+        return -1;
+    }
+
+    private double calcularTiempoDesdeUltimaActualizacion() {
+        if (ultimaActualizacion == null) {
+            return 0;
+        } else {
+            Date fechaActual = new Date();
+            long difTiempo = fechaActual.getTime() - ultimaActualizacion.getTime();
+            return difTiempo / (1000 * 60);
+        }
+    }
+
+    private int obtenerCocherasOcupadas() {
+        int ocupado = 0;
+        for (Cochera c : cocheras) {
+            if (!c.estaLibre()) {
+                ocupado += 1;
+            }
+        }
+        return ocupado;
+    }
+
+    public void actualizarFactorDemanda() {
+
+        double minutos = calcularTiempoDesdeUltimaActualizacion();
+
+        if (minutos == 10) {
+            int difIngresoEgreso = ingresosVehiculo - egresosVehiculo;
+            int capacidad = cocheras.size();
+            int ocupado = obtenerCocherasOcupadas();
+            int ocupacionRelativa = capacidad / ocupado;
+
+            if (difIngresoEgreso <= capacidad * 0.1) {
+                factorDeDemanda -= 0.01 * minutos;
+                if (factorDeDemanda < 0.025) {
+                    factorDeDemanda = 0.025;
                 }
-                return null;
-        }
-
-	public double getTarifario(TipoVehiculo tipo) {
-		for(Tarifario f:tarifarios){
-	 if(f.getTipoVehiculo().equals(tipo)){
-         return f.getValorHora();
-	}
+            } else if (difIngresoEgreso > 0 && difIngresoEgreso > capacidad / 10) {
+                if (ocupacionRelativa < capacidad * 0.33) {
+                    factorDeDemanda += 0.05 * minutos;
+                } else if (ocupacionRelativa >= capacidad * 0.33 && ocupacionRelativa <= capacidad * 0.66) {
+                    factorDeDemanda += 0.1 * minutos;
+                } else if (ocupacionRelativa > capacidad * 0.66) {
+                    factorDeDemanda += 0.15 * minutos;
                 }
-                return-1;
+                if (factorDeDemanda > 10) {
+                    factorDeDemanda = 10;
+                }
+            } else if (difIngresoEgreso < 0 && difIngresoEgreso <= capacidad * 0.1) {
+                if (factorDeDemanda > 1) {
+                    factorDeDemanda = 1;
+                } else {
+                    factorDeDemanda -= 0.05 * minutos;
+                    if (factorDeDemanda < 0.25) {
+                        factorDeDemanda = 0.25;
+                    }
+                }
+            }
         }
+        ultimaActualizacion = new Date();
+        ingresosVehiculo = 0;
+        egresosVehiculo = 0;
+    }
 
-	/**
-	 
-	 */
-	public void actualizarFactorDemanda() {
-        if(fechaYHora==null){
-	  fechaYHora =  new Date();
-	  }
-       Date horaIngres = new Date();
-	  long diferenciaTiempo = fechaYHora.getTime() - horaIngres.getTime();
-             double minutos = diferenciaTiempo / (1000.0* 60.0);
-	   int diferenciaIngEgreso= ingresosVehiculo-egresoVehiculo;
-	  
-	  if( minutos!=0){
-	      int capacidad=cocheras.size();
-	      int ocupado=0;
-	      for(Cochera c : cocheras){
-	         if(!c.estaLibre()){
-	             ocupado+=1;
-	            }
-	        }     
-	  
-	   int capacidadLibreCochera= capacidad-ocupado;
-	    
-	    if(diferenciaIngEgreso<=capacidad/10 && diferenciaIngEgreso> 0 ){
-	  
-	           factorDeDemanda = factorDeDemanda-0.01*minutos;
-	             if(factorDeDemanda<0.025){
-	                    factorDeDemanda=0.025;
-	                    }
-	                     }else  if(diferenciaIngEgreso>capacidad/10 ){
-	                  
-	                           if(capacidadLibreCochera<capacidad/33){
-	                    factorDeDemanda=factorDeDemanda+0.05*minutos;
-	                                 
-	                                   }if(capacidadLibreCochera>=capacidad/33 && capacidadLibreCochera<=capacidad/66){ 
-	                                     factorDeDemanda=factorDeDemanda+0.1*minutos;                 
-	                                            }
-	                                   else if(capacidadLibreCochera>capacidad/66){
-	                factorDeDemanda=factorDeDemanda+0.15*minutos;   
-	  }
-	            if(factorDeDemanda>10){
-	                    factorDeDemanda=10;
-	                    }                           
-	  }else if(diferenciaIngEgreso<=capacidad/10 && diferenciaIngEgreso< 0 ){
-	      if(factorDeDemanda>1){
-	      factorDeDemanda=1;
-	      }else{
-	       factorDeDemanda=factorDeDemanda-0.05*minutos;
-	       if(factorDeDemanda<0.25){
-	       factorDeDemanda=0.25;
-	       }
-	      }
-	  }
-	  }
-	}
-
-	
-	public void agregarEstadia(String patente, String codCochera) {
-         Cochera cochera;
-             int codigo=Integer.parseInt(codCochera);
-            cochera = cocheras.stream()
-                    .filter(c -> c.getCodigo().equals(codigo))
-                    .findFirst()
-                    .orElse(null);
-	  if(cochera != null){
-	  if(cochera.estaLibre()){
-	  Vehiculo v = fachada.getVehiculo(patente);
-	  Estadia e = new Estadia(v, cochera);
-	  cochera.estacionarVehiculo(e);
-	  }else{
-	  Estadia estadiaAnomala = getEstadiaActual(cochera);
-	  Anomalia anomalia = new Anomalia("HOUDINI", new Date(),estadiaAnomala);
-	  estadiaAnomala.agregarAnomalia(anomalia); 
-	  }
-	 
-	}
+    public void agregarEstadia(Vehiculo vehiculo, Cochera cochera) {
+        if (cochera.estaLibre()) {
+            Estadia e = new Estadia(vehiculo, cochera);
+            cochera.estacionarVehiculo(e);
+        } else {
+            Estadia estadiaAnomala = cochera.getEstadiaActual();
+            Anomalia anomalia = new Anomalia("HOUDINI", new Date(), estadiaAnomala);
+            estadiaAnomala.agregarAnomalia(anomalia);
         }
+    }
 
-	
-	private Vehiculo getVehiculo(String patente) {
-	return fachada.getVehiculo(patente);
-	}
+    public void ingreso(Vehiculo vehiculo, Cochera cochera) {
+        ingresosVehiculo += 1;
+        actualizarFactorDemanda();
+        agregarEstadia(vehiculo, cochera);
+    }
 
-	
-	public void ingreso(String patente, String codigoCochera) {
-          ingresosVehiculo  +=1;
-	  actualizarFactorDemanda();
-	  agregarEstadia(patente, codigoCochera);
-	}
+    public void egreso(Vehiculo vehiculo, Cochera cochera) {
+        egresosVehiculo += 1;
+        actualizarFactorDemanda();
+        cerrarEstadia(vehiculo, cochera);
+    }
 
-	
-	public void egreso(String patente, String codigoCochera) {
-            egresoVehiculo+=1;
-	  actualizarFactorDemanda();
-	  cerrarEstadia(patente, codigoCochera);
-	}
-
-	
-	public void cerrarEstadia(String patente, String codCochera) {
-             Cochera cochera;
-             int codigo=Integer.parseInt(codCochera);
-            cochera = cocheras.stream()
-                    .filter(c -> c.getCodigo().equals(codigo))
-                    .findFirst()
-                    .orElse(null);
-	  
-	  if(cochera != null){
-	     if(!cochera.estaLibre()){
-	     Estadia e = getEstadiaActual(cochera);
-	  if(e.getVehiculo().getPatente().equals(patente)){
-	  e.setFechaYHoraSalida();
-	  e.procesarEgreso();
-	  }else{
-	  Anomalia a = new Anomalia("TRANSPORTADOR1",new Date() ,e );
-	  e.agregarAnomalia(a);
-	  
-	  Vehiculo v = fachada.getVehiculo(patente);
-	  Estadia estadiaAnomalaTransporter2 = new Estadia(v, cochera);
-	  Anomalia a2 = new Anomalia("TRANSPORTADOR2",new Date(),estadiaAnomalaTransporter2 );
-	  }
-	  }else{
-	  Estadia estadiaAnomalaMistery = getEstadiaActual(cochera);
-	  estadiaAnomalaMistery.setFechaYHoraEntrada();
-	  estadiaAnomalaMistery.setFechaYHoraSalida();
-	  Anomalia a3 = new Anomalia("MISTERY", new Date(),estadiaAnomalaMistery );
-	  estadiaAnomalaMistery.agregarAnomalia(a3);
-	}
-          }}
-	
-	
-	private Estadia getEstadiaActual(Cochera cochera) {
-              return cochera.getEstadiaActual();
-	}
-
+    public void cerrarEstadia(Vehiculo vehiculo, Cochera cochera) {
+        Estadia e = cochera.getEstadiaActual();
+        if (!cochera.estaLibre()) {
+            if (e.getVehiculo().getPatente().equals(vehiculo.getPatente())) {
+                e.setFechaYHoraSalida(new Date());
+                e.procesarEgreso();
+            } else {
+                Anomalia anomaliaTransportador1 = new Anomalia("TRANSPORTADOR1", new Date(), e);
+                e.agregarAnomalia(anomaliaTransportador1);
+                e.setVehiculo(vehiculo);
+                Anomalia anomaliaTransportador2 = new Anomalia("TRANSPORTADOR2", new Date(), e);
+                e.agregarAnomalia(anomaliaTransportador2);
+            }
+        } else {
+            Date fechaActual = new Date();
+            e.setFechaYHoraEntrada(fechaActual);
+            e.setFechaYHoraSalida(fechaActual);
+            Anomalia anomaliaMistery = new Anomalia("MISTERY", new Date(), e);
+            e.agregarAnomalia(anomaliaMistery);
+        }
+    }
 }
