@@ -9,11 +9,18 @@ import java.util.Random;
 import logica.Cochera;
 import logica.CuentaCorriente;
 import logica.Etiqueta;
+import logica.Fachada;
 import logica.Parking;
 import logica.Propietario;
+import logica.SensorParking;
 import logica.Tarifario;
 import logica.TipoVehiculo;
 import logica.Vehiculo;
+import simuladortransito.Estacionable;
+import simuladortransito.FlujoIngreso;
+import simuladortransito.Periodo;
+import simuladortransito.SimuladorTransito;
+import simuladortransito.Transitable;
 
 /**
  *
@@ -21,11 +28,21 @@ import logica.Vehiculo;
  */
 public class DatosPrueba {
 
+    private static SimuladorTransito simulador;
+
     public static void iniciar() {
+
+        Fachada fachada = Fachada.getInstancia();
+
         Parking parking1 = new Parking("Parking 1", "Av Italia 3342");
         Parking parking2 = new Parking("Parking 2", "Canelones 1236");
+        fachada.agregar(parking1);
+        fachada.agregar(parking2);
 
         ArrayList<Propietario> propietarios = generarPropietarioAleatorio();
+        for (Propietario p : propietarios) {
+            fachada.agregar(p);
+        }
 
         ArrayList<Etiqueta> etiquetas = new ArrayList();
         Etiqueta discapacitado = new Etiqueta("Discapacitado");
@@ -50,8 +67,14 @@ public class DatosPrueba {
         tiposVehiculos.add(standard);
         tiposVehiculos.add(carga);
         tiposVehiculos.add(pasajero);
+        for (TipoVehiculo tipo : tiposVehiculos) {
+            fachada.agregar(tipo);
+        }
 
-        ArrayList<Vehiculo> vehiculos = generarVehiculosAleatorios(propietarios, etiquetas, tiposVehiculos, 4);
+        ArrayList<Vehiculo> vehiculos = generarVehiculosAleatorios(propietarios, etiquetas, tiposVehiculos, 320);
+        for (Vehiculo v : vehiculos) {
+            fachada.agregar(v);
+        }
 
         ArrayList<Tarifario> tarifarios = new ArrayList();
         Tarifario tarifarioMotocicletas = new Tarifario(motocicleta, 0.05);
@@ -66,6 +89,53 @@ public class DatosPrueba {
         parking1.setTarifarios(tarifarios);
         parking2.setTarifarios(tarifarios);
 
+        //1.Configurar simulador
+        ArrayList<Transitable> vehiculosTransitables = generarVehiculos(100);
+        ArrayList<Estacionable> cocheras = generarCocheras(50);
+
+        //new SimuladorIU(null, false, new SensorParking(parking1), cocheras, vehiculosTransitables).setVisible(true);
+        simulador = SimuladorTransito.getInstancia();
+        simulador.addTransitables(vehiculosTransitables);
+        simulador.addEstacionables(cocheras);
+        //2. Programarlo
+        try {
+            FlujoIngreso flujo = new FlujoIngreso("Ingreso matutino", new Periodo(0, 5), 30);
+            simulador.programar(flujo);
+            //3. Ejecutarlo
+            simulador.iniciar(new SensorParking(parking1));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static ArrayList<Transitable> generarVehiculos(int cantidad) {
+        Fachada fachada = Fachada.getInstancia();
+        ArrayList<Vehiculo> vehiculos = fachada.getVehiculos();
+        ArrayList<Transitable> ret = new ArrayList<>();
+        for (int i = 0; i < cantidad && i < vehiculos.size(); i++) {
+            ret.add(vehiculos.get(i));
+        }
+        for (Transitable r : ret) {
+            vehiculos.add((Vehiculo) r);
+        }
+
+        return ret;
+    }
+
+    private static ArrayList<Estacionable> generarCocheras(int cantidad) {
+        Fachada fachada = Fachada.getInstancia();
+        ArrayList<Estacionable> ret = new ArrayList<>();
+        for (Parking p : fachada.getParkings()) {
+            for (Cochera c : p.getCocheras()) {
+                if (cantidad > 0) {
+                    ret.add(c);
+                    cantidad--;
+                } else {
+                    break;
+                }
+            }
+        }
+        return ret;
     }
 
     private static ArrayList<Propietario> generarPropietarioAleatorio() {

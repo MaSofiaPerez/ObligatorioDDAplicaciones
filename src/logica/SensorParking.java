@@ -9,27 +9,24 @@ import simuladortransito.Transitable;
 public class SensorParking implements Sensor {
 
     Parking parking;
-
-    public void avisarIngreso(Vehiculo v, Cochera c) {
-        parking.agregarEstadia(v, c);
-    }
-
-    public void avisarEgreso(Vehiculo v, Cochera c) {
-        parking.cerrarEstadia(v, c);
+    
+    public SensorParking(Parking p){
+        
+        this.parking = p;
     }
 
     @Override
     public void ingreso(Transitable transitable, Estacionable estacionable) {
         Vehiculo v = (Vehiculo) transitable;
         Cochera c = (Cochera) estacionable;
-        avisarIngreso(v, c);
+        parking.agregarEstadia(v,c);
     }
 
     @Override
     public void egreso(Transitable transitable, Estacionable estacionable) {
         Vehiculo v = (Vehiculo) transitable;
         Cochera c = (Cochera) estacionable;
-        avisarEgreso(v, c);
+        parking.cerrarEstadia(v, c);
     }
 
 }

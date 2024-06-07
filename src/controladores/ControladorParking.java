@@ -13,11 +13,18 @@ import logica.Parking;
  */
 public class ControladorParking {
     private ArrayList<Parking> parkings;
+    
+    public ControladorParking(){
+        this.parkings = new ArrayList();
+    }
 
     public ArrayList<Parking> getParkings() {
         return parkings;
     }
     
+    public void agregar(Parking p){
+        parkings.add(p);
+    }
     
     
 }

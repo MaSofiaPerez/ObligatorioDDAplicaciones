@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 public class Parking {
 
+    //TODO: agregar estado de tendencia
+    //TODO: revisar el calculo de factor de estaria, manejar UT
     private double factorDeDemanda = 1;
 
     private String nombre;
@@ -27,9 +29,6 @@ public class Parking {
         this.direccion = direccion;
         this.cocheras = new ArrayList();
         this.tarifarios = new ArrayList();
-        for(Cochera c: cocheras){
-            c.setParking(this);
-        }
     }
 
     public double getFactorDeDemanda() {
@@ -50,6 +49,9 @@ public class Parking {
     
     public void setCocheras(ArrayList<Cochera> cocheras){
         this.cocheras = cocheras;
+        for(Cochera c: cocheras){
+            c.setParking(this);
+        }
     }
 
     public double getTarifario(TipoVehiculo tipo) {
