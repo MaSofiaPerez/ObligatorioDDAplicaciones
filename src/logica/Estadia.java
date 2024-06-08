@@ -1,13 +1,15 @@
 package logica;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 
 public class Estadia {
 
-    private Date fechaYHoraEntrada;
+    private LocalDateTime fechaYHoraEntrada;
 
-    private Date fechaYHoraSalida;
+    private LocalDateTime fechaYHoraSalida;
 
     private double totalFacturado;
 
@@ -24,24 +26,24 @@ public class Estadia {
     public Estadia(Vehiculo vehiculo, Cochera cochera) {
         this.vehiculo = vehiculo;
         this.cochera = cochera;
-        this.fechaYHoraEntrada = new Date();
+        this.fechaYHoraEntrada = LocalDateTime.now();
         this.multas = new ArrayList();
         this.totalFacturado = 0;
     }
 
-    public Date getFechaYHoraEntrada() {
+    public LocalDateTime getFechaYHoraEntrada() {
         return fechaYHoraEntrada;
     }
 
-    public void setFechaYHoraEntrada(Date nueva) {
+    public void setFechaYHoraEntrada(LocalDateTime nueva) {
         this.fechaYHoraEntrada = nueva;
     }
 
-    public Date getFechaYHoraSalida() {
+    public LocalDateTime getFechaYHoraSalida() {
         return fechaYHoraSalida;
     }
 
-    public void setFechaYHoraSalida(Date nueva) {
+    public void setFechaYHoraSalida(LocalDateTime nueva) {
         this.fechaYHoraSalida = nueva;
     }
 
@@ -87,7 +89,7 @@ public class Estadia {
     }
 
     public void setFechaYHoraEntrada() {
-        fechaYHoraEntrada = new Date();
+        fechaYHoraEntrada = LocalDateTime.now();
     }
 
     public void agregarMulta() {
@@ -111,8 +113,8 @@ public class Estadia {
     }
 
     public double CalcularTiempoEstadiaEnMinutos() {
-        long diferenciaTiempo = fechaYHoraSalida.getTime() - fechaYHoraEntrada.getTime();
-        return diferenciaTiempo / (60 * 1000);
+        return ChronoUnit.MINUTES.between(fechaYHoraEntrada, fechaYHoraSalida);
+
     }
 
     private void debitarCuentaCorrientePropietario(double montoFacturado) {

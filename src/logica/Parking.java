@@ -1,6 +1,8 @@
 package logica;
 
 import interfaces.EscuchadorSensor;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.ArrayList;
 
@@ -8,17 +10,21 @@ public class Parking {
 
     //TODO: agregar estado de tendencia
     //TODO: revisar el calculo de factor de estaria, manejar UT
-    private double factorDeDemanda = 1;
+    private double factorDeDemanda;
 
     private String nombre;
 
     private String direccion;
 
-    private Date ultimaActualizacion;
+    private LocalDateTime ultimaActualizacion;
 
-    private int ingresosVehiculo;
+    private static final String TENDENCIA_ESTABLE = "Estable";
 
-    private int egresosVehiculo;
+    private static final String TENDENCIA_POSITIVA = "Positiva";
+
+    private static final String TENDENCIA_NEGATIVA = "Negativa";
+
+    private String estadoTendencia;
 
     private ArrayList<Tarifario> tarifarios;
 
@@ -27,12 +33,19 @@ public class Parking {
     public Parking(String nombre, String direccion) {
         this.nombre = nombre;
         this.direccion = direccion;
+        this.factorDeDemanda = 1;
+        this.estadoTendencia = TENDENCIA_ESTABLE;
         this.cocheras = new ArrayList();
         this.tarifarios = new ArrayList();
+        this.ultimaActualizacion = LocalDateTime.now();
     }
 
     public double getFactorDeDemanda() {
         return factorDeDemanda;
+    }
+
+    public String getEstadoTendencia() {
+        return estadoTendencia;
     }
 
     public ArrayList<Tarifario> getTarifarios() {
@@ -46,10 +59,10 @@ public class Parking {
     public ArrayList<Cochera> getCocheras() {
         return cocheras;
     }
-    
-    public void setCocheras(ArrayList<Cochera> cocheras){
+
+    public void setCocheras(ArrayList<Cochera> cocheras) {
         this.cocheras = cocheras;
-        for(Cochera c: cocheras){
+        for (Cochera c : cocheras) {
             c.setParking(this);
         }
     }
@@ -63,16 +76,6 @@ public class Parking {
         return -1;
     }
 
-    private double calcularTiempoDesdeUltimaActualizacion() {
-        if (ultimaActualizacion == null) {
-            return 0;
-        } else {
-            Date fechaActual = new Date();
-            long difTiempo = fechaActual.getTime() - ultimaActualizacion.getTime();
-            return difTiempo / (1000 * 60);
-        }
-    }
-
     private int obtenerCocherasOcupadas() {
         int ocupado = 0;
         for (Cochera c : cocheras) {
@@ -84,45 +87,54 @@ public class Parking {
     }
 
     public void actualizarFactorDemanda() {
+        LocalDateTime ahora = LocalDateTime.now();
+        int diferenciaUT = calcularDiferenciaUT(ultimaActualizacion, ahora);
 
-        double minutos = calcularTiempoDesdeUltimaActualizacion();
-
-        if (minutos == 10) {
-            int difIngresoEgreso = ingresosVehiculo - egresosVehiculo;
+        if (diferenciaUT >= 10) {
+            int ingresos = 0;
+            int egresos = 0;
             int capacidad = cocheras.size();
-            int ocupado = obtenerCocherasOcupadas();
-            int ocupacionRelativa = capacidad / ocupado;
 
-            if (difIngresoEgreso <= capacidad * 0.1) {
-                factorDeDemanda -= 0.01 * minutos;
-                if (factorDeDemanda < 0.025) {
-                    factorDeDemanda = 0.025;
+            for (Cochera c : cocheras) {
+                ingresos += c.getEstadias().stream()
+                        .filter(e -> e.getFechaYHoraEntrada().isAfter(ultimaActualizacion.minus(10, ChronoUnit.MINUTES)))
+                        .count();
+                egresos += c.getEstadias().stream()
+                        .filter(e -> e.getFechaYHoraSalida() != null && e.getFechaYHoraSalida().isAfter(ultimaActualizacion.minus(10, ChronoUnit.MINUTES)))
+                        .count();
+
+            }
+
+            double diferencia = ingresos - egresos;
+            double ocupacion = (double) cocheras.stream().filter(Cochera::estaLibre).count() / capacidad;
+
+            if (Math.abs(diferencia) <= 0.1 * capacidad) {
+                estadoTendencia = TENDENCIA_ESTABLE;
+                factorDeDemanda = Math.max(factorDeDemanda - 0.01 * diferenciaUT, 0.25);
+            } else if (diferencia > 0.1 * capacidad) {
+                estadoTendencia = TENDENCIA_POSITIVA;
+                if (ocupacion < 0.33) {
+                    factorDeDemanda = Math.min(factorDeDemanda + 0.05 * diferenciaUT, 10);
+                } else if (ocupacion < 0.66) {
+                    factorDeDemanda = Math.min(factorDeDemanda + 0.1 * diferenciaUT, 10);
+                } else {
+                    factorDeDemanda = Math.min(factorDeDemanda + 0.15 * diferenciaUT, 10);
                 }
-            } else if (difIngresoEgreso > 0 && difIngresoEgreso > capacidad / 10) {
-                if (ocupacionRelativa < capacidad * 0.33) {
-                    factorDeDemanda += 0.05 * minutos;
-                } else if (ocupacionRelativa >= capacidad * 0.33 && ocupacionRelativa <= capacidad * 0.66) {
-                    factorDeDemanda += 0.1 * minutos;
-                } else if (ocupacionRelativa > capacidad * 0.66) {
-                    factorDeDemanda += 0.15 * minutos;
-                }
-                if (factorDeDemanda > 10) {
-                    factorDeDemanda = 10;
-                }
-            } else if (difIngresoEgreso < 0 && difIngresoEgreso <= capacidad * 0.1) {
+            } else if (diferencia < -0.1 * capacidad) {
+                estadoTendencia = TENDENCIA_NEGATIVA;
                 if (factorDeDemanda > 1) {
                     factorDeDemanda = 1;
                 } else {
-                    factorDeDemanda -= 0.05 * minutos;
-                    if (factorDeDemanda < 0.25) {
-                        factorDeDemanda = 0.25;
-                    }
+                    factorDeDemanda = Math.max(factorDeDemanda - 0.05 * diferenciaUT, 0.025);
                 }
             }
+            ultimaActualizacion = ahora;
         }
-        ultimaActualizacion = new Date();
-        ingresosVehiculo = 0;
-        egresosVehiculo = 0;
+
+    }
+    
+    private int calcularDiferenciaUT(LocalDateTime inicio, LocalDateTime fin){
+        return (int) ChronoUnit.MINUTES.between(inicio, fin);
     }
 
     public void agregarEstadia(Vehiculo vehiculo, Cochera cochera) {
@@ -137,13 +149,11 @@ public class Parking {
     }
 
     public void ingreso(Vehiculo vehiculo, Cochera cochera) {
-        ingresosVehiculo += 1;
         actualizarFactorDemanda();
         agregarEstadia(vehiculo, cochera);
     }
 
     public void egreso(Vehiculo vehiculo, Cochera cochera) {
-        egresosVehiculo += 1;
         actualizarFactorDemanda();
         cerrarEstadia(vehiculo, cochera);
     }
@@ -152,7 +162,7 @@ public class Parking {
         Estadia e = cochera.getEstadiaActual();
         if (!cochera.estaLibre()) {
             if (e.getVehiculo().getPatente().equals(vehiculo.getPatente())) {
-                e.setFechaYHoraSalida(new Date());
+                e.setFechaYHoraSalida(LocalDateTime.now());
                 e.procesarEgreso();
             } else {
                 Anomalia anomaliaTransportador1 = new Anomalia("TRANSPORTADOR1", new Date(), e);
@@ -162,11 +172,15 @@ public class Parking {
                 e.agregarAnomalia(anomaliaTransportador2);
             }
         } else {
-            Date fechaActual = new Date();
+            LocalDateTime fechaActual = LocalDateTime.now();
             e.setFechaYHoraEntrada(fechaActual);
             e.setFechaYHoraSalida(fechaActual);
             Anomalia anomaliaMistery = new Anomalia("MISTERY", new Date(), e);
             e.agregarAnomalia(anomaliaMistery);
         }
+    }
+
+    private int calcularDiferenciaUT(LocalDateTime ultimaActualizacion, LocalDateTime ahora) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
