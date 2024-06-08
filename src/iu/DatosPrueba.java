@@ -102,7 +102,7 @@ public class DatosPrueba {
         try {
             FlujoIngreso flujo = new FlujoIngreso("Ingreso matutino", new Periodo(0, 5), 30);
             simulador.programar(flujo);
-            FlujoIngreso flujo2 = new FlujoIngreso("Entrada Partido", new Periodo(5, 6), 50);
+            /*FlujoIngreso flujo2 = new FlujoIngreso("Entrada Partido", new Periodo(5, 6), 50);
             simulador.programar(flujo2);
             FlujoEgreso flujoegreso = new FlujoEgreso("Salida de clases", new Periodo(4, 2), 30);
             simulador.programar(flujoegreso);
@@ -111,10 +111,11 @@ public class DatosPrueba {
             FlujoEgreso flujoegreso2 = new FlujoEgreso("Salida de Estadio", new Periodo(8, 3), 80);
             simulador.programar(flujoegreso2);
             FlujoEgreso flujoegreso3 = new FlujoEgreso("Salida de Trabajo", new Periodo(6, 4), 40);
-            simulador.programar(flujoegreso3);
+            simulador.programar(flujoegreso3);*/
 
             //3. Ejecutarlo
             simulador.iniciar(new SensorParking(parking1));
+
         } catch (Exception e) {
             e.printStackTrace();
         }
