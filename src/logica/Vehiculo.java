@@ -45,20 +45,30 @@ public class Vehiculo implements Transitable {
         etiquetas.add(e);
     }
     
+     private boolean tieneEtiqueta(String descripcion) {
+        for (Etiqueta e : etiquetas) {
+            if (e.getDescripcion().equals(descripcion)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
 
     @Override
     public boolean esDiscapacitado() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        
+        return tieneEtiqueta("Discapacitado");
     }
 
     @Override
     public boolean esElectrico() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return tieneEtiqueta("Electrico");
     }
 
     @Override
     public boolean esEmpleado() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return tieneEtiqueta("Empleado");
     }
 
 }

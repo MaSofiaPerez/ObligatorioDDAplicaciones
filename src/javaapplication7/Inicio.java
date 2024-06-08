@@ -7,6 +7,7 @@ package javaapplication7;
 
 import simuladortransito.SimuladorTransito;
 import iu.DatosPrueba;
+import iu.TableroControl;
 /**
  *
  * @author sofia
@@ -16,6 +17,7 @@ public class Inicio {
 
     public static void main(String[] args) {
         DatosPrueba.iniciar();
+        new TableroControl().setVisible(true);
     }
     
 }
