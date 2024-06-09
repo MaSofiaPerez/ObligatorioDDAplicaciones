@@ -21,6 +21,8 @@ import logica.Vehiculo;
 import simuladortransito.Estacionable;
 import simuladortransito.FlujoEgreso;
 import simuladortransito.FlujoIngreso;
+import simuladortransito.Modo;
+import simuladortransito.PerfilIngreso;
 import simuladortransito.Periodo;
 import simuladortransito.SimuladorTransito;
 import simuladortransito.Transitable;
@@ -58,6 +60,8 @@ public class DatosPrueba {
         ArrayList<Cochera> cocherasP1 = generarCocheraAleatoria(etiquetas, 80);
         ArrayList<Cochera> cocherasP2 = generarCocheraAleatoria(etiquetas, 80);
 
+       // verificarEtiquetasCocheras(cocherasP1);
+
         parking1.setCocheras(cocherasP1);
         parking2.setCocheras(cocherasP2);
 
@@ -82,8 +86,8 @@ public class DatosPrueba {
         ArrayList<Tarifario> tarifarios = new ArrayList();
         Tarifario tarifarioMotocicletas = new Tarifario(motocicleta, 0.05);
         Tarifario tarifarioStandard = new Tarifario(standard, 0.1);
-        Tarifario tarifarioCarga = new Tarifario(standard, 0.1);
-        Tarifario tarifarioPasajero = new Tarifario(standard, 0.1);
+        Tarifario tarifarioCarga = new Tarifario(carga, 0.1);
+        Tarifario tarifarioPasajero = new Tarifario(pasajero, 0.1);
         tarifarios.add(tarifarioMotocicletas);
         tarifarios.add(tarifarioStandard);
         tarifarios.add(tarifarioCarga);
@@ -96,24 +100,34 @@ public class DatosPrueba {
         ArrayList<Transitable> vehiculosTransitables = generarVehiculos(100);
         ArrayList<Estacionable> cocheras = generarCocheras(50);
 
-        //new SimuladorIU(null, false, new SensorParking(parking1), cocheras, vehiculosTransitables).setVisible(true);
         simulador = SimuladorTransito.getInstancia();
         simulador.addTransitables(vehiculosTransitables);
         simulador.addEstacionables(cocheras);
         //2. Programarlo
         try {
-            FlujoIngreso flujo = new FlujoIngreso("Ingreso matutino", new Periodo(0, 5), 30);
+            FlujoIngreso flujo = new FlujoIngreso("Ingreso matutino", new Periodo(0, 5), 10);
             simulador.programar(flujo);
-            /*FlujoIngreso flujo2 = new FlujoIngreso("Entrada Partido", new Periodo(5, 6), 50);
+            FlujoIngreso flujo2 = new FlujoIngreso("Entrada Partido", new Periodo(0, 6), 20);
             simulador.programar(flujo2);
+            PerfilIngreso perfilAnomalo = new PerfilIngreso.Builder().invadirEstacionableDiscapacitado(Modo.ALEATORIO)
+                    .invadirEstacionableElectrico(Modo.NUNCA)
+                    .invadirEstacionableEmpleadoInterno(Modo.SIEMPRE)
+                    .ocuparEstacionableOcupado(Modo.ALEATORIO)
+                    .build();
+            FlujoIngreso flujoAnomalo = new FlujoIngreso("Ingeso con anomalias", new Periodo(0, 10), 10, perfilAnomalo);
+            simulador.programar(flujoAnomalo);
+            /*
             FlujoEgreso flujoegreso = new FlujoEgreso("Salida de clases", new Periodo(4, 2), 30);
             simulador.programar(flujoegreso);
             FlujoIngreso flujo3 = new FlujoIngreso("Ingreso Trabajo", new Periodo(3, 3), 50);
             simulador.programar(flujo3);
             FlujoEgreso flujoegreso2 = new FlujoEgreso("Salida de Estadio", new Periodo(8, 3), 80);
             simulador.programar(flujoegreso2);*/
-            FlujoEgreso flujoegreso3 = new FlujoEgreso("Salida de Trabajo", new Periodo(6, 4), 40);
-            simulador.programar(flujoegreso3);
+            FlujoEgreso flujoegreso3 = new FlujoEgreso("Salida de Trabajo", new Periodo(3, 10), 40);
+           simulador.programar(flujoegreso3);
+           
+           //TODO: revisar el flujoAnomalo - generacion de cocheras
+           //TODO: revisar egresos - no muestra los subtotales ni las multas
 
             //3. Ejecutarlo
             simulador.iniciar(new SensorParking(parking1));
@@ -136,6 +150,15 @@ public class DatosPrueba {
 
         return ret;
     }
+
+    /*private static void verificarEtiquetasCocheras(ArrayList<Cochera> cocheras) {
+        for (Cochera cochera : cocheras) {
+            System.out.println("Cochera: " + cochera.getCodigo());
+            for (Etiqueta etiqueta : cochera.getEtiquetas()) {
+                System.out.println("  Etiqueta: " + etiqueta.getDescripcion());
+            }
+        }
+    }*/
 
     private static ArrayList<Estacionable> generarCocheras(int cantidad) {
         Fachada fachada = Fachada.getInstancia();
@@ -166,49 +189,63 @@ public class DatosPrueba {
         return propietarios;
     }
 
-    /*private static ArrayList<Cochera> generarCocheraAleatoria(ArrayList<Etiqueta> etiquetas, int cantidad) {
-        ArrayList<Cochera> cocheras = new ArrayList();
-        Random random = new Random();
-        for (int i = 0; i < cantidad; i++) {
-            String codigoCochera = "C" + (random.nextInt(100) + 1);
-            Cochera cochera = new Cochera(codigoCochera);
-            for (Etiqueta e : etiquetas) {
-                int probabilidad = random.nextInt(10);
-                if (probabilidad < 2 && cochera.getEtiquetas().size() < 2) {
-                    cochera.addEtiqueta(e);
-                }
-                cocheras.add(cochera);
-            }
+   private static ArrayList<Cochera> generarCocheraAleatoria(ArrayList<Etiqueta> etiquetas, int cantidad) {
+    ArrayList<Cochera> cocheras = new ArrayList<>();
+    Random random = new Random();
+    Set<String> codigosUsados = new HashSet<>();
 
-        }
-        return cocheras;
-    }*/
-    private static ArrayList<Cochera> generarCocheraAleatoria(ArrayList<Etiqueta> etiquetas, int cantidad) {
-        ArrayList<Cochera> cocheras = new ArrayList<>();
-        Random random = new Random();
-        Set<String> codigosUsados = new HashSet<>();
-
-        while (cocheras.size() < cantidad) {
-            String codigoCochera;
-            do {
-                codigoCochera = "C" + (random.nextInt(100) + 1);
-            } while (codigosUsados.contains(codigoCochera));
-
-            codigosUsados.add(codigoCochera);
-            Cochera cochera = new Cochera(codigoCochera);
-
-            for (Etiqueta e : etiquetas) {
-                int probabilidad = random.nextInt(10);
-                if (probabilidad < 2 && cochera.getEtiquetas().size() < 2) {
-                    cochera.addEtiqueta(e);
-                }
-            }
-
-            cocheras.add(cochera);
-        }
-
-        return cocheras;
+    // Asegurar que todas las etiquetas se usen al menos una vez
+    for (Etiqueta etiqueta : etiquetas) {
+        String codigoCochera;
+        do {
+            codigoCochera = "C" + (random.nextInt(100) + 1);
+        } while (codigosUsados.contains(codigoCochera));
+        
+        codigosUsados.add(codigoCochera);
+        Cochera cochera = new Cochera(codigoCochera);
+        cochera.addEtiqueta(etiqueta);
+        cocheras.add(cochera);
     }
+
+    // Calcular el número de cocheras que deben tener al menos una etiqueta (20%)
+    int cocherasConEtiqueta = (int) Math.ceil(cantidad * 0.2);
+
+    // Asignar etiquetas aleatoriamente al resto del 20% de las cocheras
+    while (cocheras.size() < cocherasConEtiqueta) {
+        String codigoCochera;
+        do {
+            codigoCochera = "C" + (random.nextInt(100) + 1);
+        } while (codigosUsados.contains(codigoCochera));
+
+        codigosUsados.add(codigoCochera);
+        Cochera cochera = new Cochera(codigoCochera);
+
+        // Asignar una o dos etiquetas de forma aleatoria
+        int numeroEtiquetas = random.nextInt(2) + 1; // 1 o 2 etiquetas
+        for (int i = 0; i < numeroEtiquetas; i++) {
+            Etiqueta etiqueta = etiquetas.get(random.nextInt(etiquetas.size()));
+            if (!cochera.getEtiquetas().contains(etiqueta)) {
+                cochera.addEtiqueta(etiqueta);
+            }
+        }
+        cocheras.add(cochera);
+    }
+
+    // Rellenar el resto de las cocheras sin etiquetas
+    while (cocheras.size() < cantidad) {
+        String codigoCochera;
+        do {
+            codigoCochera = "C" + (random.nextInt(100) + 1);
+        } while (codigosUsados.contains(codigoCochera));
+
+        codigosUsados.add(codigoCochera);
+        Cochera cochera = new Cochera(codigoCochera);
+        cocheras.add(cochera);
+    }
+
+    return cocheras;
+}
+
 
     private static ArrayList<Vehiculo> generarVehiculosAleatorios(ArrayList<Propietario> propietarios, ArrayList<Etiqueta> etiquetas, ArrayList<TipoVehiculo> tiposVehiculos, int cantidad) {
         Random random = new Random();

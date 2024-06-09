@@ -4,7 +4,14 @@
  */
 package iu;
 
+import controladores.ControladorCarteleraElectronica;
 import interfaces.VistaCarteleraElectronica;
+import java.util.ArrayList;
+import java.util.Map;
+import javax.swing.table.DefaultTableModel;
+import logica.Cochera;
+import logica.Parking;
+import logica.Tarifario;
 
 /**
  *
@@ -12,11 +19,16 @@ import interfaces.VistaCarteleraElectronica;
  */
 public class DialogoCarteleraElectronica extends javax.swing.JFrame implements VistaCarteleraElectronica {
 
+    private final Parking parking;
+    private final ControladorCarteleraElectronica controlador;
+
     /**
      * Creates new form CarteleraElectronica
      */
-    public DialogoCarteleraElectronica() {
+    public DialogoCarteleraElectronica(Parking p) {
+        this.parking = p;
         initComponents();
+        controlador = new ControladorCarteleraElectronica(this, parking);
     }
 
     /**
@@ -42,6 +54,8 @@ public class DialogoCarteleraElectronica extends javax.swing.JFrame implements V
         jScrollPane3 = new javax.swing.JScrollPane();
         tableTipoVehiculo = new javax.swing.JTable();
         btnCerrarCartelera = new javax.swing.JButton();
+        txtNombreParking = new javax.swing.JTextField();
+        txtTotalCocheras = new javax.swing.JTextField();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -68,14 +82,22 @@ public class DialogoCarteleraElectronica extends javax.swing.JFrame implements V
 
         tableCocheras.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"Discapacitado", null},
-                {"Eléctrico", null},
-                {"Empleado interno", null}
+                {null, null},
+                {null, null},
+                {null, null}
             },
             new String [] {
                 "Cocheras", "Disponibilidad"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Integer.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
         jScrollPane2.setViewportView(tableCocheras);
 
         tableTipoVehiculo.setModel(new javax.swing.table.DefaultTableModel(
@@ -99,6 +121,10 @@ public class DialogoCarteleraElectronica extends javax.swing.JFrame implements V
             }
         });
 
+        txtNombreParking.setFont(new java.awt.Font("Dialog", 2, 18)); // NOI18N
+
+        txtTotalCocheras.setFont(new java.awt.Font("Dialog", 2, 14)); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -115,21 +141,25 @@ public class DialogoCarteleraElectronica extends javax.swing.JFrame implements V
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(lblNombreParking)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel1))))
+                                .addComponent(txtNombreParking, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel1)
+                                .addGap(56, 56, 56))))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(93, 93, 93)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
-                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(150, 150, 150)
-                                .addComponent(btnCerrarCartelera))
-                            .addGroup(layout.createSequentialGroup()
                                 .addGap(96, 96, 96)
-                                .addComponent(lblDisponibilidad)))
-                        .addGap(0, 106, Short.MAX_VALUE)))
+                                .addComponent(lblDisponibilidad)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtTotalCocheras, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(93, 93, 93)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(btnCerrarCartelera)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
+                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -139,18 +169,21 @@ public class DialogoCarteleraElectronica extends javax.swing.JFrame implements V
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblTitulo)
                     .addComponent(jLabel1)
-                    .addComponent(lblNombreParking))
+                    .addComponent(lblNombreParking)
+                    .addComponent(txtNombreParking, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblDisponibilidad)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblDisponibilidad)
+                    .addComponent(txtTotalCocheras, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
                 .addComponent(btnCerrarCartelera)
                 .addContainerGap())
         );
@@ -160,6 +193,8 @@ public class DialogoCarteleraElectronica extends javax.swing.JFrame implements V
 
     private void btnCerrarCarteleraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarCarteleraActionPerformed
         // TODO add your handling code here:
+        new DialogoTableroDeControl().setVisible(true);
+        dispose();
     }//GEN-LAST:event_btnCerrarCarteleraActionPerformed
 
 
@@ -178,5 +213,38 @@ public class DialogoCarteleraElectronica extends javax.swing.JFrame implements V
     private javax.swing.JLabel lblTitulo;
     private javax.swing.JTable tableCocheras;
     private javax.swing.JTable tableTipoVehiculo;
+    private javax.swing.JTextField txtNombreParking;
+    private javax.swing.JTextField txtTotalCocheras;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void mostrarNombreParking(String nombre) {
+        txtNombreParking.setText(nombre);
+    }
+
+    @Override
+    public void cargarTablaTarifario(ArrayList<Tarifario> tarifarios) {
+        DefaultTableModel model = (DefaultTableModel) tableTipoVehiculo.getModel();
+        model.setRowCount(0); // Limpiar la tabla antes de agregar nuevas filas
+
+        for (Tarifario tarifario : tarifarios) {
+            model.addRow(new Object[]{tarifario.getTipoVehiculo().getTipo(), tarifario.getValorHora()});
+        }
+    }
+
+    @Override
+    public void mostrarCantCocherasDisponibles(int cocheras) {
+        txtTotalCocheras.setText(cocheras + "");
+    }
+
+    @Override
+    public void actualizarTablaDisponibilidad(Map<String, Integer> disponibilidad) {
+        DefaultTableModel model = (DefaultTableModel) tableCocheras.getModel();
+        model.setRowCount(0); // Limpiar la tabla antes de agregar nuevas filas
+
+        for (Map.Entry<String, Integer> entry : disponibilidad.entrySet()) {
+            model.addRow(new Object[]{entry.getKey(), entry.getValue()});
+        }
+    }
+
 }

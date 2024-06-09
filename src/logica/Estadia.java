@@ -24,7 +24,9 @@ public class Estadia {
         this.vehiculo = vehiculo;
         this.cochera = cochera;
         this.fechaYHoraEntrada = LocalDateTime.now();
+        this.fechaYHoraSalida = null;
         this.multas = new ArrayList();
+        this.anomalias = new ArrayList();
         this.totalFacturado = 0;
     }
 
@@ -77,16 +79,18 @@ public class Estadia {
         Parking p = cochera.getParking();
         ArrayList<Tarifario> tarifarios = p.getTarifarios();
         double tarifario = 0;
-        for (Tarifario t : tarifarios) {
+        for (int i=0;i< tarifarios.size();i++) {
+           Tarifario t=tarifarios.get(i);
             if (t.getTipoVehiculo() == tipoVehiculo) {
                 tarifario = t.getValorHora();
             }
         }
+
         agregarMulta();
         double tiempoestadiaMinutos = CalcularTiempoEstadiaEnMinutos();
         double montoFacturado = calcularTotalFacturado(tiempoestadiaMinutos, tarifario);
         this.totalFacturado = montoFacturado;
-        //cochera.setEstadiaActual(null);
+        cochera.desocupar();
         debitarCuentaCorrientePropietario(montoFacturado);
     }
 
@@ -111,7 +115,7 @@ public class Estadia {
     }
 
     public double CalcularTiempoEstadiaEnMinutos() {
-        return ChronoUnit.MINUTES.between(fechaYHoraEntrada, fechaYHoraSalida);
+        return ChronoUnit.SECONDS.between(fechaYHoraEntrada, fechaYHoraSalida);
 
     }
 
@@ -128,14 +132,19 @@ public class Estadia {
             double tiempo = CalcularTiempoEstadiaEnMinutos();
             double tarifa = cochera.getParking().getTarifario(vehiculo.getTipoVehiculo());
             return tarifa * tiempo * cochera.getParking().getFactorDeDemanda();
-        }else{
+        } else {
             return 0;
         }
 
     }
 
-    public void agregarAnomalia(Anomalia anomalia) {
-        anomalias.add(anomalia);
+    public boolean agregarAnomalia(Anomalia anomalia) {
+        boolean agregarOK = false;
+        if (anomalias.add(anomalia)) {
+            agregarOK = true;
+        }
+        return agregarOK;
+
     }
 
 }

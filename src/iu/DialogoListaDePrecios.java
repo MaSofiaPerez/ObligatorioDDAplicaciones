@@ -5,6 +5,7 @@
 package iu;
 
 import interfaces.VistaListaDePrecios;
+import logica.Parking;
 
 /**
  *
@@ -12,10 +13,12 @@ import interfaces.VistaListaDePrecios;
  */
 public class DialogoListaDePrecios extends javax.swing.JFrame implements VistaListaDePrecios{
 
+    private final Parking parking;
     /**
      * Creates new form ListaDePrecios
      */
-    public DialogoListaDePrecios() {
+    public DialogoListaDePrecios(Parking p) {
+        this.parking = p;
         initComponents();
     }
 
@@ -144,6 +147,8 @@ public class DialogoListaDePrecios extends javax.swing.JFrame implements VistaLi
 
     private void btnCerrarListaPreciosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarListaPreciosActionPerformed
         // TODO add your handling code here:
+        new DialogoTableroDeControl().setVisible(true);
+        dispose();
     }//GEN-LAST:event_btnCerrarListaPreciosActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed

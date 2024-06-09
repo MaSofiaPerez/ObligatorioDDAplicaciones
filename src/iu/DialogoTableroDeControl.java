@@ -6,8 +6,8 @@ package iu;
 
 import controladores.ControladorTableroDeControl;
 import interfaces.VistaTableroDeControl;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import logica.Anomalia;
 import logica.Parking;
@@ -19,6 +19,7 @@ import logica.Parking;
 public class DialogoTableroDeControl extends javax.swing.JFrame implements VistaTableroDeControl {
 
     private ControladorTableroDeControl controladorTablero;
+    private Parking parkingSeleccionado;
 
     /**
      * Creates new form TableroDeControl
@@ -26,6 +27,7 @@ public class DialogoTableroDeControl extends javax.swing.JFrame implements Vista
     public DialogoTableroDeControl() {
         initComponents();
         this.controladorTablero = new ControladorTableroDeControl(this);
+        tableAnomalias.setVisible(false);
 
     }
 
@@ -49,13 +51,13 @@ public class DialogoTableroDeControl extends javax.swing.JFrame implements Vista
         jTable1 = new javax.swing.JTable();
         btnCartelera = new javax.swing.JButton();
         btnPrecios = new javax.swing.JButton();
-        jSeparator3 = new javax.swing.JSeparator();
         jScrollPane2 = new javax.swing.JScrollPane();
         tableAnomalias = new javax.swing.JTable();
         btnCerrar = new javax.swing.JButton();
         jCheckBox1 = new javax.swing.JCheckBox();
         txtCantEstadias = new javax.swing.JTextField();
         txtFacturacion = new javax.swing.JTextField();
+        jSeparator4 = new javax.swing.JSeparator();
 
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -86,8 +88,6 @@ public class DialogoTableroDeControl extends javax.swing.JFrame implements Vista
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null}
             },
             new String [] {
@@ -103,6 +103,11 @@ public class DialogoTableroDeControl extends javax.swing.JFrame implements Vista
             }
         });
         jTable1.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         tableControl.setViewportView(jTable1);
 
         btnCartelera.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
@@ -180,22 +185,21 @@ public class DialogoTableroDeControl extends javax.swing.JFrame implements Vista
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtFacturacion, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnPrecios, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnCartelera))
-                    .addComponent(jSeparator3)
-                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 440, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jCheckBox1, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btnCerrar, javax.swing.GroupLayout.Alignment.TRAILING)))
+                            .addComponent(btnCerrar, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jCheckBox1, javax.swing.GroupLayout.Alignment.TRAILING)))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblTitulo)
                             .addComponent(tableControl, javax.swing.GroupLayout.PREFERRED_SIZE, 603, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(btnPrecios, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnCartelera))
+                    .addComponent(jSeparator4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 671, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -214,21 +218,21 @@ public class DialogoTableroDeControl extends javax.swing.JFrame implements Vista
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 2, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(tableControl, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
+                .addComponent(tableControl, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCartelera)
                     .addComponent(btnPrecios))
-                .addGap(18, 18, 18)
-                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jCheckBox1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnCerrar)))
-                .addContainerGap(36, Short.MAX_VALUE))
+                        .addComponent(btnCerrar))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(38, 38, 38))
         );
 
         pack();
@@ -255,6 +259,17 @@ public class DialogoTableroDeControl extends javax.swing.JFrame implements Vista
         verAnomalias();
     }//GEN-LAST:event_jCheckBox1ActionPerformed
 
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        // TODO add your handling code here:
+        int selectedRow = jTable1.getSelectedRow();
+        if (selectedRow != -1) {
+            String parking = jTable1.getValueAt(selectedRow, 0).toString();
+            //llamo al metodo dentro de el controlador tablero para q devuelva el parking
+            Parking seleccionado = controladorTablero.getParkingSeleccionado(parking);
+            this.parkingSeleccionado = seleccionado;
+        }
+    }//GEN-LAST:event_jTable1MouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCartelera;
@@ -266,7 +281,7 @@ public class DialogoTableroDeControl extends javax.swing.JFrame implements Vista
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JSeparator jSeparator4;
     private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
     private javax.swing.JLabel lblEstadias;
@@ -279,8 +294,14 @@ public class DialogoTableroDeControl extends javax.swing.JFrame implements Vista
 
     @Override
     public void abrirCartelera() {
-        new DialogoCarteleraElectronica().setVisible(true);
-        dispose();
+
+        if (parkingSeleccionado != null) {
+            new DialogoCarteleraElectronica(parkingSeleccionado).setVisible(true);
+            dispose();
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "Debe seleccionar algun parking para ver su cartelera Electrónica");
+        }
+
     }
 
     @Override
@@ -290,13 +311,25 @@ public class DialogoTableroDeControl extends javax.swing.JFrame implements Vista
 
     @Override
     public void abrirListaPrecios() {
-        new DialogoListaDePrecios().setVisible(true);
-        dispose();
+
+        if (parkingSeleccionado != null) {
+            new DialogoListaDePrecios(parkingSeleccionado).setVisible(true);
+            dispose();
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "Debe seleccionar algun parking para ver su cartelera Electrónica");
+
+        }
+
     }
 
     @Override
     public void verAnomalias() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (jCheckBox1.isSelected()) {
+            tableAnomalias.setVisible(true);
+            controladorTablero.iniciarMonitoreoAnomalias();
+        } else {
+            controladorTablero.detenerMonitoreoAnomalias();
+        }
     }
 
     @Override
@@ -309,7 +342,6 @@ public class DialogoTableroDeControl extends javax.swing.JFrame implements Vista
         txtFacturacion.setText(total + "");
     }
 
-
     @Override
     public void actualizarTablaParkings(ArrayList<Parking> parkings) {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
@@ -318,22 +350,27 @@ public class DialogoTableroDeControl extends javax.swing.JFrame implements Vista
         for (Parking parking : parkings) {
             model.addRow(new Object[]{
                 parking.getNombre(),
-                parking.getCocheras(true),
                 parking.getCocheras(false),
+                parking.getCocheras(true),
                 parking.getEstadoTendencia(),
                 parking.getFactorDeDemanda(),
                 parking.getTotalEstadias(),
                 parking.getSubtotalMultas(),
-                parking.getSubtotal(),
-            });
+                parking.getSubtotal(),});
         }
     }
 
     @Override
     public void actualizarTablaAnomalias(ArrayList<Anomalia> anomalias) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
+        model.setRowCount(0);
+
+        for (Anomalia a : anomalias) {
+            model.addRow(new Object[]{
+                a.getFechaYHora(),
+                a.getEstadia().getVehiculo().getPropietario().getNombreCompleto(),
+                a.getCodigoError(),});
+        }
     }
-
-
 
 }

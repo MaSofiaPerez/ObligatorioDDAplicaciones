@@ -16,4 +16,16 @@ public class Anomalia {
         this.estadia = estadia;
     }
 
+    public String getCodigoError() {
+        return codigoError;
+    }
+
+    public Date getFechaYHora() {
+        return fechaYHora;
+    }
+
+    public Estadia getEstadia() {
+        return estadia;
+    }
+
 }

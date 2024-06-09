@@ -3,24 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/sofia/OneDrive/Documents/NetBeansProjects/ObligatorioDDAV1/src/javaapplication7/Inicio.java</file>
-            <file>file:/C:/Users/sofia/OneDrive/Documents/NetBeansProjects/ObligatorioDDAV1/src/iu/DatosPrueba.java</file>
-            <file>file:/C:/Users/sofia/OneDrive/Documents/NetBeansProjects/ObligatorioDDAV1/src/logica/MultaElectrico.java</file>
-            <file>file:/C:/Users/sofia/OneDrive/Documents/NetBeansProjects/ObligatorioDDAV1/src/logica/MultaEmpleadoInterno.java</file>
-            <file>file:/C:/Users/sofia/OneDrive/Documents/NetBeansProjects/ObligatorioDDAV1/src/interfaces/CalculoMulta.java</file>
-            <file>file:/C:/Users/sofia/OneDrive/Documents/NetBeansProjects/ObligatorioDDAV1/src/logica/Parking.java</file>
-            <file>file:/C:/Users/sofia/OneDrive/Documents/NetBeansProjects/ObligatorioDDAV1/src/logica/Multa.java</file>
-            <file>file:/C:/Users/sofia/OneDrive/Documents/NetBeansProjects/ObligatorioDDAV1/src/logica/Propietario.java</file>
             <file>file:/C:/Users/sofia/OneDrive/Documents/NetBeansProjects/ObligatorioDDAV1/src/logica/SensorParking.java</file>
-            <file>file:/C:/Users/sofia/OneDrive/Documents/NetBeansProjects/ObligatorioDDAV1/src/controladores/ControladorVehiculo.java</file>
             <file>file:/C:/Users/sofia/OneDrive/Documents/NetBeansProjects/ObligatorioDDAV1/src/controladores/ControladorParking.java</file>
             <file>file:/C:/Users/sofia/OneDrive/Documents/NetBeansProjects/ObligatorioDDAV1/src/logica/Fachada.java</file>
-            <file>file:/C:/Users/sofia/OneDrive/Documents/NetBeansProjects/ObligatorioDDAV1/src/logica/MultaDiscapacitado.java</file>
-            <file>file:/C:/Users/sofia/OneDrive/Documents/NetBeansProjects/ObligatorioDDAV1/src/logica/Tarifario.java</file>
-            <file>file:/C:/Users/sofia/OneDrive/Documents/NetBeansProjects/ObligatorioDDAV1/src/logica/Estadia.java</file>
-            <file>file:/C:/Users/sofia/OneDrive/Documents/NetBeansProjects/ObligatorioDDAV1/src/logica/Cochera.java</file>
-            <file>file:/C:/Users/sofia/OneDrive/Documents/NetBeansProjects/ObligatorioDDAV1/src/logica/Vehiculo.java</file>
-            <file>file:/C:/Users/sofia/OneDrive/Documents/NetBeansProjects/ObligatorioDDAV1/src/logica/Etiqueta.java</file>
+            <file>file:/C:/Users/sofia/OneDrive/Documents/NetBeansProjects/ObligatorioDDAV1/src/iu/DialogoTableroDeControl.java</file>
+            <file>file:/C:/Users/sofia/OneDrive/Documents/NetBeansProjects/ObligatorioDDAV1/src/controladores/ControladorTableroDeControl.java</file>
+            <file>file:/C:/Users/sofia/OneDrive/Documents/NetBeansProjects/ObligatorioDDAV1/src/logica/Parking.java</file>
         </group>
     </open-files>
 </project-private>

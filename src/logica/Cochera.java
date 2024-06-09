@@ -107,11 +107,22 @@ public class Cochera implements Estacionable {
 
     public double getSubtotalMultas() {
         double ret = 0;
-        for(Estadia e: estadias){
-            if(e.getFechaYHoraSalida()!=null){
+        for (Estadia e : estadias) {
+            if (e.getFechaYHoraSalida() != null) {
                 ret += e.calcularMultas();
             }
         }
         return ret;
+    }
+
+    public ArrayList<Anomalia> getAnomalias() {
+        ArrayList<Anomalia> anomalias = new ArrayList();
+        for (Estadia e : estadias) {
+            if (e.getAnomalias().size() > 0) {
+                anomalias.addAll(e.getAnomalias());
+            }
+        }
+
+        return anomalias;
     }
 }

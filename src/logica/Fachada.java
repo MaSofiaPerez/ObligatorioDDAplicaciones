@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import observer.Observable;
 import observer.Observador;
 
-public class Fachada extends Observable implements Observador {
+public class Fachada {
 
     private static final Fachada instancia = new Fachada();
     private ControladorVehiculo controladorVehiculo;
@@ -65,10 +65,10 @@ public class Fachada extends Observable implements Observador {
         return controladorParking.getTotalFacturado();
     }
 
-    @Override
-    public void actualizar(Observable origen, Object evento) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public ArrayList<Anomalia> getAnomalias() {
+        return controladorParking.getAnomalias();
     }
+
     
             
 }

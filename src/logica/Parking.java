@@ -4,9 +4,11 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import observer.Observable;
 
-public class Parking extends Observable{
+public class Parking extends Observable {
 
     //TODO: agregar estado de tendencia
     //TODO: revisar el calculo de factor de estaria, manejar UT
@@ -39,8 +41,8 @@ public class Parking extends Observable{
         this.tarifarios = new ArrayList();
         this.ultimaActualizacion = LocalDateTime.now();
     }
-    
-    public String getNombre(){
+
+    public String getNombre() {
         return nombre;
     }
 
@@ -79,17 +81,16 @@ public class Parking extends Observable{
         }
         return -1;
     }
-    
-    public int getTotalEstadias(){
+
+    public int getTotalEstadias() {
         int total = 0;
-        for (Cochera c: cocheras){
-            for(Estadia e: c.getEstadias()){
-                total ++;
+        for (Cochera c : cocheras) {
+            for (Estadia e : c.getEstadias()) {
+                total++;
             }
         }
         return total;
     }
-    
 
     public void actualizarFactorDemanda() {
         LocalDateTime ahora = LocalDateTime.now();
@@ -137,8 +138,8 @@ public class Parking extends Observable{
         }
 
     }
-    
-    private int calcularDiferenciaUT(LocalDateTime inicio, LocalDateTime fin){
+
+    private int calcularDiferenciaUT(LocalDateTime inicio, LocalDateTime fin) {
         return (int) ChronoUnit.MINUTES.between(inicio, fin);
     }
 
@@ -149,20 +150,14 @@ public class Parking extends Observable{
         } else {
             Estadia estadiaAnomala = cochera.getEstadiaActual();
             Anomalia anomalia = new Anomalia("HOUDINI", new Date(), estadiaAnomala);
-            estadiaAnomala.agregarAnomalia(anomalia);
+            if (estadiaAnomala.agregarAnomalia(anomalia)) {
+                avisar(Eventos.INGRESO_ANOMALIA);
+            }
         }
-    }
-
-    public void ingreso(Vehiculo vehiculo, Cochera cochera) {
         actualizarFactorDemanda();
-        agregarEstadia(vehiculo, cochera);
+
         avisar(Eventos.INGRESO_VEHICULO);
-    }
 
-    public void egreso(Vehiculo vehiculo, Cochera cochera) {
-        actualizarFactorDemanda();
-        cerrarEstadia(vehiculo, cochera);
-        avisar(Eventos.EGRESO_VEHICULO);
     }
 
     public void cerrarEstadia(Vehiculo vehiculo, Cochera cochera) {
@@ -176,49 +171,86 @@ public class Parking extends Observable{
                 e.agregarAnomalia(anomaliaTransportador1);
                 e.setVehiculo(vehiculo);
                 Anomalia anomaliaTransportador2 = new Anomalia("TRANSPORTADOR2", new Date(), e);
-                e.agregarAnomalia(anomaliaTransportador2);
+                if (e.agregarAnomalia(anomaliaTransportador2)) {
+                    avisar(Eventos.INGRESO_ANOMALIA);
+                }
             }
         } else {
             LocalDateTime fechaActual = LocalDateTime.now();
             e.setFechaYHoraEntrada(fechaActual);
             e.setFechaYHoraSalida(fechaActual);
             Anomalia anomaliaMistery = new Anomalia("MISTERY", new Date(), e);
-            e.agregarAnomalia(anomaliaMistery);
+            if (e.agregarAnomalia(anomaliaMistery)) {
+                avisar(Eventos.INGRESO_ANOMALIA);
+
+            };
         }
+        actualizarFactorDemanda();
+        avisar(Eventos.EGRESO_VEHICULO);
+
     }
 
     public double getSubtotal() {
         double ret = 0;
-        for (Cochera c: cocheras){
+        for (Cochera c : cocheras) {
             ret += c.getSubtotal();
         }
         return ret;
     }
-    
-    public int getCocheras(boolean estaLibre){
-       int ocupadas = 0;
-       int libres = 0;
-        for(Cochera c: cocheras){
-            if(c.estaLibre()){
-              libres ++;  
-            }else{
-                ocupadas ++;
+
+    public int getCocheras(boolean estaLibre) {
+        int ocupadas = 0;
+        int libres = 0;
+        for (Cochera c : cocheras) {
+            if (c.estaLibre()) {
+                libres++;
+            } else {
+                ocupadas++;
             }
         }
-        if(estaLibre){
+        if (estaLibre) {
             return libres;
-        }else{
+        } else {
             return ocupadas;
         }
-        
     }
     
-    public double getSubtotalMultas(){
-        int ret=0;
-        for(Cochera c: cocheras){
-          c.getSubtotalMultas();  
+    public Map<String, Integer> getDisponbilidadPorEtiqueta(){
+        Map<String, Integer> cocherasLibresPorEtiqueta = new HashMap<>();
+        
+        // Iterar sobre cada cochera
+        for (Cochera cochera : cocheras) {
+            // Verificar si la cochera está disponible
+            if (cochera.estaLibre()) {
+                // Iterar sobre las etiquetas de la cochera
+                for (Etiqueta etiqueta : cochera.getEtiquetas()) {
+                    // Obtener la descripción de la etiqueta
+                    String descripcionEtiqueta = etiqueta.getDescripcion();
+                    // Incrementar el contador de cocheras libres para esta etiqueta
+                    cocherasLibresPorEtiqueta.put(descripcionEtiqueta, 
+                        cocherasLibresPorEtiqueta.getOrDefault(descripcionEtiqueta, 0) + 1);
+                }
+            }
+        }
+        
+        return cocherasLibresPorEtiqueta;
+
+    }
+
+    public double getSubtotalMultas() {
+        int ret = 0;
+        for (Cochera c : cocheras) {
+            c.getSubtotalMultas();
         }
         return ret;
+    }
+
+    public ArrayList<Anomalia> getAnomalias() {
+        ArrayList<Anomalia> anomalias = new ArrayList();
+        for (Cochera c : cocheras) {
+            anomalias = c.getAnomalias();
+        }
+        return anomalias;
     }
 
 }

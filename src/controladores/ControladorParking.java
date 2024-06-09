@@ -5,7 +5,9 @@
 package controladores;
 
 import java.util.ArrayList;
+import logica.Anomalia;
 import logica.Cochera;
+import logica.Estadia;
 import logica.Parking;
 
 /**
@@ -47,6 +49,14 @@ public class ControladorParking {
     
     public double getSubTotalFacturado(Parking p){
         return p.getSubtotal();
+    }
+
+    public ArrayList<Anomalia> getAnomalias() {
+        ArrayList<Anomalia> anomalias= new ArrayList();
+        for(Parking p:parkings){
+            anomalias = p.getAnomalias();
+        }
+        return anomalias;
     }
     
 }
