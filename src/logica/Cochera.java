@@ -12,7 +12,7 @@ public class Cochera implements Estacionable {
     private ArrayList<Etiqueta> etiquetas;
 
     private ArrayList<Estadia> estadias;
-    
+
     private Parking parking;
 
     public Cochera(String codigo) {
@@ -24,19 +24,15 @@ public class Cochera implements Estacionable {
 
     public void estacionarVehiculo(Estadia estadia) {
         this.estadiaActual = estadia;
+        estadias.add(estadia);
     }
 
     public boolean estaLibre() {
         return estadiaActual == null;
     }
 
-    public void setEstadiaActual(Estadia estadiaActual) {
-        this.estadiaActual = estadiaActual;
-    }
-
     public void desocupar() {
-        estadias.add(estadiaActual);
-        setEstadiaActual(null);
+        estadiaActual = null;
     }
 
     public String getCodigo() {
@@ -58,6 +54,7 @@ public class Cochera implements Estacionable {
     public Parking getParking() {
         return parking;
     }
+
     void setParking(Parking parking) {
         this.parking = parking;
     }
@@ -70,9 +67,17 @@ public class Cochera implements Estacionable {
         }
         return false;
     }
-    
-    public void addEtiqueta(Etiqueta e){
+
+    public void addEtiqueta(Etiqueta e) {
         etiquetas.add(e);
+    }
+
+    public double getFacturaEstadias() {
+        int ret = 0;
+        for (Estadia e : estadias) {
+            ret += e.calcularSubTotalFacturado();
+        }
+        return ret;
     }
 
     @Override
@@ -90,6 +95,23 @@ public class Cochera implements Estacionable {
         return tieneEtiqueta("Empleado");
     }
 
-    
+    public double getSubtotal() {
+        double ret = 0;
+        for (Estadia e : estadias) {
+            if (e.getFechaYHoraSalida() != null) {
+                ret += e.calcularSubTotalFacturado();
+            }
+        }
+        return ret;
+    }
 
+    public double getSubtotalMultas() {
+        double ret = 0;
+        for(Estadia e: estadias){
+            if(e.getFechaYHoraSalida()!=null){
+                ret += e.calcularMultas();
+            }
+        }
+        return ret;
+    }
 }

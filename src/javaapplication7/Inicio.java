@@ -5,7 +5,8 @@
 package javaapplication7;
 
 import iu.DatosPrueba;
-import iu.TableroDeControl;
+import iu.DialogoTableroDeControl;
+import iu.VentanaInicio;
 
 /**
  *
@@ -14,8 +15,8 @@ import iu.TableroDeControl;
 public class Inicio {
 
     public static void main(String[] args) {
+        new VentanaInicio().setVisible(true);
         DatosPrueba.iniciar();
-        new TableroDeControl().setVisible(true);
     }
 
 }

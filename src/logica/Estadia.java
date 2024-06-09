@@ -3,7 +3,6 @@ package logica;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class Estadia {
 
@@ -18,8 +17,6 @@ public class Estadia {
     private Cochera cochera;
 
     private ArrayList<Anomalia> anomalias;
-
-    private ArrayList<Estadia> estadiasfinalizadas;
 
     private ArrayList<Multa> multas;
 
@@ -71,6 +68,10 @@ public class Estadia {
         return multas;
     }
 
+    public void setFechaYHoraEntrada() {
+        fechaYHoraEntrada = LocalDateTime.now();
+    }
+
     public void procesarEgreso() {
         TipoVehiculo tipoVehiculo = vehiculo.getTipoVehiculo();
         Parking p = cochera.getParking();
@@ -81,15 +82,12 @@ public class Estadia {
                 tarifario = t.getValorHora();
             }
         }
+        agregarMulta();
         double tiempoestadiaMinutos = CalcularTiempoEstadiaEnMinutos();
         double montoFacturado = calcularTotalFacturado(tiempoestadiaMinutos, tarifario);
         this.totalFacturado = montoFacturado;
-        cochera.setEstadiaActual(null);
+        //cochera.setEstadiaActual(null);
         debitarCuentaCorrientePropietario(montoFacturado);
-    }
-
-    public void setFechaYHoraEntrada() {
-        fechaYHoraEntrada = LocalDateTime.now();
     }
 
     public void agregarMulta() {
@@ -126,9 +124,14 @@ public class Estadia {
     }
 
     public double calcularSubTotalFacturado() {
-        double tiempo = CalcularTiempoEstadiaEnMinutos();
-        double tarifa = cochera.getParking().getTarifario(vehiculo.getTipoVehiculo());
-        return tarifa * tiempo * cochera.getParking().getFactorDeDemanda();
+        if (fechaYHoraSalida != null) {
+            double tiempo = CalcularTiempoEstadiaEnMinutos();
+            double tarifa = cochera.getParking().getTarifario(vehiculo.getTipoVehiculo());
+            return tarifa * tiempo * cochera.getParking().getFactorDeDemanda();
+        }else{
+            return 0;
+        }
+
     }
 
     public void agregarAnomalia(Anomalia anomalia) {

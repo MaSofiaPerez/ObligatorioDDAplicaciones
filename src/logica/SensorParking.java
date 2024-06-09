@@ -1,7 +1,5 @@
 package logica;
 
-import interfaces.EscuchadorSensor;
-import java.util.ArrayList;
 import simuladortransito.Estacionable;
 import simuladortransito.Sensor;
 import simuladortransito.Transitable;

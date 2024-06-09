@@ -5,6 +5,7 @@
 package controladores;
 
 import java.util.ArrayList;
+import logica.Cochera;
 import logica.Parking;
 
 /**
@@ -26,5 +27,26 @@ public class ControladorParking {
         parkings.add(p);
     }
     
+    public int getTotalEstadias(){
+        int ret = 0;
+        for(Parking p: parkings){
+            ret += p.getTotalEstadias();
+        }
+        return ret;
+    }
+
+    public double getTotalFacturado() {
+        int ret = 0;
+        for(Parking p: parkings){
+            for(Cochera c: p.getCocheras()){
+                ret += c.getFacturaEstadias();
+            }
+        }
+        return ret;
+    }
+    
+    public double getSubTotalFacturado(Parking p){
+        return p.getSubtotal();
+    }
     
 }

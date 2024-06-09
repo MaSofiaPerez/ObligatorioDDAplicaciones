@@ -4,10 +4,11 @@ import java.util.Date;
 
 public class Anomalia {
 
-	private String codigoError;
+    private String codigoError;
 
-	private Date fechaYHora;
-private Estadia estadia;
+    private Date fechaYHora;
+    
+    private Estadia estadia;
 
     public Anomalia(String codigoError, Date fechaYHora, Estadia estadia) {
         this.codigoError = codigoError;

@@ -21,9 +21,6 @@ public class Vehiculo implements Transitable {
         this.etiquetas = new ArrayList();
     }
         
-    public Vehiculo(String patente){
-        this.patente = patente;
-    }
     public String getPatente() {
         return patente;
     }

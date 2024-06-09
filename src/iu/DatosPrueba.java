@@ -5,7 +5,9 @@
 package iu;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 import logica.Cochera;
 import logica.CuentaCorriente;
 import logica.Etiqueta;
@@ -109,9 +111,9 @@ public class DatosPrueba {
             FlujoIngreso flujo3 = new FlujoIngreso("Ingreso Trabajo", new Periodo(3, 3), 50);
             simulador.programar(flujo3);
             FlujoEgreso flujoegreso2 = new FlujoEgreso("Salida de Estadio", new Periodo(8, 3), 80);
-            simulador.programar(flujoegreso2);
+            simulador.programar(flujoegreso2);*/
             FlujoEgreso flujoegreso3 = new FlujoEgreso("Salida de Trabajo", new Periodo(6, 4), 40);
-            simulador.programar(flujoegreso3);*/
+            simulador.programar(flujoegreso3);
 
             //3. Ejecutarlo
             simulador.iniciar(new SensorParking(parking1));
@@ -164,7 +166,7 @@ public class DatosPrueba {
         return propietarios;
     }
 
-    private static ArrayList<Cochera> generarCocheraAleatoria(ArrayList<Etiqueta> etiquetas, int cantidad) {
+    /*private static ArrayList<Cochera> generarCocheraAleatoria(ArrayList<Etiqueta> etiquetas, int cantidad) {
         ArrayList<Cochera> cocheras = new ArrayList();
         Random random = new Random();
         for (int i = 0; i < cantidad; i++) {
@@ -179,6 +181,32 @@ public class DatosPrueba {
             }
 
         }
+        return cocheras;
+    }*/
+    private static ArrayList<Cochera> generarCocheraAleatoria(ArrayList<Etiqueta> etiquetas, int cantidad) {
+        ArrayList<Cochera> cocheras = new ArrayList<>();
+        Random random = new Random();
+        Set<String> codigosUsados = new HashSet<>();
+
+        while (cocheras.size() < cantidad) {
+            String codigoCochera;
+            do {
+                codigoCochera = "C" + (random.nextInt(100) + 1);
+            } while (codigosUsados.contains(codigoCochera));
+
+            codigosUsados.add(codigoCochera);
+            Cochera cochera = new Cochera(codigoCochera);
+
+            for (Etiqueta e : etiquetas) {
+                int probabilidad = random.nextInt(10);
+                if (probabilidad < 2 && cochera.getEtiquetas().size() < 2) {
+                    cochera.addEtiqueta(e);
+                }
+            }
+
+            cocheras.add(cochera);
+        }
+
         return cocheras;
     }
 

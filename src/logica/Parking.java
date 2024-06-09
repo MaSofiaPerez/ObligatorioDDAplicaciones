@@ -1,12 +1,12 @@
 package logica;
 
-import interfaces.EscuchadorSensor;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.ArrayList;
+import observer.Observable;
 
-public class Parking {
+public class Parking extends Observable{
 
     //TODO: agregar estado de tendencia
     //TODO: revisar el calculo de factor de estaria, manejar UT
@@ -38,6 +38,10 @@ public class Parking {
         this.cocheras = new ArrayList();
         this.tarifarios = new ArrayList();
         this.ultimaActualizacion = LocalDateTime.now();
+    }
+    
+    public String getNombre(){
+        return nombre;
     }
 
     public double getFactorDeDemanda() {
@@ -75,16 +79,17 @@ public class Parking {
         }
         return -1;
     }
-
-    private int obtenerCocherasOcupadas() {
-        int ocupado = 0;
-        for (Cochera c : cocheras) {
-            if (!c.estaLibre()) {
-                ocupado += 1;
+    
+    public int getTotalEstadias(){
+        int total = 0;
+        for (Cochera c: cocheras){
+            for(Estadia e: c.getEstadias()){
+                total ++;
             }
         }
-        return ocupado;
+        return total;
     }
+    
 
     public void actualizarFactorDemanda() {
         LocalDateTime ahora = LocalDateTime.now();
@@ -151,11 +156,13 @@ public class Parking {
     public void ingreso(Vehiculo vehiculo, Cochera cochera) {
         actualizarFactorDemanda();
         agregarEstadia(vehiculo, cochera);
+        avisar(Eventos.INGRESO_VEHICULO);
     }
 
     public void egreso(Vehiculo vehiculo, Cochera cochera) {
         actualizarFactorDemanda();
         cerrarEstadia(vehiculo, cochera);
+        avisar(Eventos.EGRESO_VEHICULO);
     }
 
     public void cerrarEstadia(Vehiculo vehiculo, Cochera cochera) {
@@ -178,6 +185,40 @@ public class Parking {
             Anomalia anomaliaMistery = new Anomalia("MISTERY", new Date(), e);
             e.agregarAnomalia(anomaliaMistery);
         }
+    }
+
+    public double getSubtotal() {
+        double ret = 0;
+        for (Cochera c: cocheras){
+            ret += c.getSubtotal();
+        }
+        return ret;
+    }
+    
+    public int getCocheras(boolean estaLibre){
+       int ocupadas = 0;
+       int libres = 0;
+        for(Cochera c: cocheras){
+            if(c.estaLibre()){
+              libres ++;  
+            }else{
+                ocupadas ++;
+            }
+        }
+        if(estaLibre){
+            return libres;
+        }else{
+            return ocupadas;
+        }
+        
+    }
+    
+    public double getSubtotalMultas(){
+        int ret=0;
+        for(Cochera c: cocheras){
+          c.getSubtotalMultas();  
+        }
+        return ret;
     }
 
 }

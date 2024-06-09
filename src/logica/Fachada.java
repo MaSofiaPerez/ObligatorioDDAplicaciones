@@ -5,8 +5,10 @@ import controladores.ControladorVehiculo;
 import controladores.ControladorPropietario;
 import controladores.ControladorTipoVehiculo;
 import java.util.ArrayList;
+import observer.Observable;
+import observer.Observador;
 
-public class Fachada {
+public class Fachada extends Observable implements Observador {
 
     private static final Fachada instancia = new Fachada();
     private ControladorVehiculo controladorVehiculo;
@@ -54,4 +56,19 @@ public class Fachada {
     public void agregar(TipoVehiculo tipo){
         controladorTiposVehiculo.agregar(tipo);
     }
+    
+    public int getTotalEstadias(){
+        return controladorParking.getTotalEstadias();
+    }
+    
+    public double getSubtotalFacturadoParkings(){
+        return controladorParking.getTotalFacturado();
+    }
+
+    @Override
+    public void actualizar(Observable origen, Object evento) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+    
+            
 }
