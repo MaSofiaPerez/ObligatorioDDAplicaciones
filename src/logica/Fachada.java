@@ -4,6 +4,8 @@ import controladores.ControladorParking;
 import controladores.ControladorVehiculo;
 import controladores.ControladorPropietario;
 import controladores.ControladorTipoVehiculo;
+import exceptions.NuevoValorDemasiadoAltoException;
+import exceptions.NuevoValorNegativoException;
 import java.util.ArrayList;
 import observer.Observable;
 import observer.Observador;
@@ -67,6 +69,10 @@ public class Fachada {
 
     public ArrayList<Anomalia> getAnomalias() {
         return controladorParking.getAnomalias();
+    }
+
+    public void cambiarPrecioUT(Tarifario tarifarioSeleccionado, double nuevoPrecio, Parking parking) throws NuevoValorDemasiadoAltoException, NuevoValorNegativoException{
+        controladorParking.cambiarPrecioUT(tarifarioSeleccionado, nuevoPrecio, parking);
     }
 
     

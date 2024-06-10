@@ -4,22 +4,31 @@
  */
 package iu;
 
+import controladores.ControladorListaDePrecios;
 import interfaces.VistaListaDePrecios;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import logica.Parking;
+import logica.Tarifario;
 
 /**
  *
  * @author sofia
  */
-public class DialogoListaDePrecios extends javax.swing.JFrame implements VistaListaDePrecios{
+public class DialogoListaDePrecios extends javax.swing.JFrame implements VistaListaDePrecios {
 
     private final Parking parking;
+    private final ControladorListaDePrecios controlador;
+    private Tarifario tarifarioSeleccionado;
+
     /**
      * Creates new form ListaDePrecios
      */
     public DialogoListaDePrecios(Parking p) {
         this.parking = p;
         initComponents();
+        this.controlador = new ControladorListaDePrecios(this, parking);
     }
 
     /**
@@ -39,6 +48,7 @@ public class DialogoListaDePrecios extends javax.swing.JFrame implements VistaLi
         txtNuevoValor = new javax.swing.JTextField();
         btnCerrarListaPrecios = new javax.swing.JButton();
         btnGuardar = new javax.swing.JButton();
+        txtNombreParking = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -62,6 +72,11 @@ public class DialogoListaDePrecios extends javax.swing.JFrame implements VistaLi
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+        });
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(jTable1);
@@ -92,6 +107,8 @@ public class DialogoListaDePrecios extends javax.swing.JFrame implements VistaLi
             }
         });
 
+        txtNombreParking.setFont(new java.awt.Font("Dialog", 2, 18)); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -101,7 +118,9 @@ public class DialogoListaDePrecios extends javax.swing.JFrame implements VistaLi
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabel1))
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtNombreParking, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addGroup(layout.createSequentialGroup()
                             .addContainerGap()
@@ -122,7 +141,9 @@ public class DialogoListaDePrecios extends javax.swing.JFrame implements VistaLi
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(txtNombreParking, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -131,7 +152,7 @@ public class DialogoListaDePrecios extends javax.swing.JFrame implements VistaLi
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblNuevoValor)
                     .addComponent(txtNuevoValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnGuardar)
                     .addComponent(btnCerrarListaPrecios))
@@ -153,7 +174,19 @@ public class DialogoListaDePrecios extends javax.swing.JFrame implements VistaLi
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         // TODO add your handling code here:
+        guardarPrecio();
     }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        // TODO add your handling code here:
+        int selectedRow = jTable1.getSelectedRow();
+        if (selectedRow != -1) {
+            String tarifario = jTable1.getValueAt(selectedRow, 0).toString();
+            //llamo al metodo dentro de el controlador tablero para q devuelva el parking
+            Tarifario seleccionado = controlador.getTarifarioSeleccionado(tarifario);
+            this.tarifarioSeleccionado = seleccionado;
+        }
+    }//GEN-LAST:event_jTable1MouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCerrarListaPrecios;
@@ -163,6 +196,42 @@ public class DialogoListaDePrecios extends javax.swing.JFrame implements VistaLi
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTable jTable1;
     private javax.swing.JLabel lblNuevoValor;
+    private javax.swing.JTextField txtNombreParking;
     private javax.swing.JTextField txtNuevoValor;
     // End of variables declaration//GEN-END:variables
+
+    private void guardarPrecio() {
+
+        if (tarifarioSeleccionado != null) {
+
+            double nuevoPrecio = Double.parseDouble(txtNuevoValor.getText());
+            controlador.guardarCambioDePrecioUT(tarifarioSeleccionado, nuevoPrecio);
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "Debe seleccionar algun tarifario para poder guardar el nuevo valor");
+
+        }
+        
+        txtNuevoValor.setText("");
+    }
+
+    @Override
+    public void mostrarNombreParking(String nombre) {
+        txtNombreParking.setText(nombre);
+    }
+
+    @Override
+    public void mostrarMensajeDeError(String message) {
+        JOptionPane.showMessageDialog(rootPane, message);
+
+    }
+
+    @Override
+    public void actualizarTablaTarifario(ArrayList<Tarifario> tarifarios) {
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        model.setRowCount(0); // Limpiar la tabla antes de agregar nuevas filas
+
+        for (Tarifario tarifario : tarifarios) {
+            model.addRow(new Object[]{tarifario.getTipoVehiculo().getTipo(), tarifario.getValorHora()});
+        }
+    }
 }

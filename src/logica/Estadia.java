@@ -79,8 +79,8 @@ public class Estadia {
         Parking p = cochera.getParking();
         ArrayList<Tarifario> tarifarios = p.getTarifarios();
         double tarifario = 0;
-        for (int i=0;i< tarifarios.size();i++) {
-           Tarifario t=tarifarios.get(i);
+        for (int i = 0; i < tarifarios.size(); i++) {
+            Tarifario t = tarifarios.get(i);
             if (t.getTipoVehiculo() == tipoVehiculo) {
                 tarifario = t.getValorHora();
             }
@@ -97,6 +97,7 @@ public class Estadia {
     public void agregarMulta() {
 
         for (Etiqueta eCochera : cochera.getEtiquetas()) {
+
             for (Etiqueta eVehiculo : vehiculo.getEtiquetas()) {
                 if (eCochera != eVehiculo) {
                     multas.add(new Multa());
@@ -108,9 +109,12 @@ public class Estadia {
 
     public double calcularMultas() {
         double total = 0;
-        for (Multa m : multas) {
-            total += m.calcularMulta(this);
+        if (multas.size() != 0) {
+            for (Multa m : multas) {
+                total += m.calcularMulta(this);
+            }
         }
+
         return total;
     }
 

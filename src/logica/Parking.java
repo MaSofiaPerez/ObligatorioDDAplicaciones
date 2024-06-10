@@ -1,5 +1,6 @@
 package logica;
 
+import exceptions.NuevoValorNegativoException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -193,7 +194,10 @@ public class Parking extends Observable {
     public double getSubtotal() {
         double ret = 0;
         for (Cochera c : cocheras) {
-            ret += c.getSubtotal();
+            if (c.getSubtotal() != 0) {
+                ret += c.getSubtotal();
+
+            }
         }
         return ret;
     }
@@ -214,10 +218,10 @@ public class Parking extends Observable {
             return ocupadas;
         }
     }
-    
-    public Map<String, Integer> getDisponbilidadPorEtiqueta(){
+
+    public Map<String, Integer> getDisponbilidadPorEtiqueta() {
         Map<String, Integer> cocherasLibresPorEtiqueta = new HashMap<>();
-        
+
         // Iterar sobre cada cochera
         for (Cochera cochera : cocheras) {
             // Verificar si la cochera está disponible
@@ -227,12 +231,12 @@ public class Parking extends Observable {
                     // Obtener la descripción de la etiqueta
                     String descripcionEtiqueta = etiqueta.getDescripcion();
                     // Incrementar el contador de cocheras libres para esta etiqueta
-                    cocherasLibresPorEtiqueta.put(descripcionEtiqueta, 
-                        cocherasLibresPorEtiqueta.getOrDefault(descripcionEtiqueta, 0) + 1);
+                    cocherasLibresPorEtiqueta.put(descripcionEtiqueta,
+                            cocherasLibresPorEtiqueta.getOrDefault(descripcionEtiqueta, 0) + 1);
                 }
             }
         }
-        
+
         return cocherasLibresPorEtiqueta;
 
     }
@@ -252,5 +256,17 @@ public class Parking extends Observable {
         }
         return anomalias;
     }
+
+    public void cambiarPrecioUT(Tarifario tarifarioSeleccionado, double nuevoPrecio){
+            for(Tarifario t: tarifarios)
+            {
+                if(t.getTipoVehiculo().equals(tarifarioSeleccionado.getTipoVehiculo())){
+                    t.setValorHora(nuevoPrecio);
+                }
+            }
+
+    }
+
+    
 
 }

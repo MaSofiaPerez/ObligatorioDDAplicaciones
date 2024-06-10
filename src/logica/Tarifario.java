@@ -1,6 +1,6 @@
 package logica;
 
-public class Tarifario {
+public class Tarifario{
 
     private double valorHora;
 
@@ -17,6 +17,12 @@ public class Tarifario {
 
     public double getValorHora() {
         return valorHora;
+    }
+
+    public void setValorHora(double nuevo) {
+
+        this.valorHora = nuevo;
+
     }
 
 }
