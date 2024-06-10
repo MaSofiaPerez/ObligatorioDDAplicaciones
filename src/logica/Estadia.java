@@ -87,7 +87,7 @@ public class Estadia {
         }
 
         agregarMulta();
-        double tiempoestadiaMinutos = CalcularTiempoEstadiaEnMinutos();
+        double tiempoestadiaMinutos = CalcularTiempoEstadia();
         double montoFacturado = calcularTotalFacturado(tiempoestadiaMinutos, tarifario);
         this.totalFacturado = montoFacturado;
         cochera.desocupar();
@@ -118,7 +118,7 @@ public class Estadia {
         return total;
     }
 
-    public double CalcularTiempoEstadiaEnMinutos() {
+    public double CalcularTiempoEstadia() {
         return ChronoUnit.SECONDS.between(fechaYHoraEntrada, fechaYHoraSalida);
 
     }
@@ -133,7 +133,7 @@ public class Estadia {
 
     public double calcularSubTotalFacturado() {
         if (fechaYHoraSalida != null) {
-            double tiempo = CalcularTiempoEstadiaEnMinutos();
+            double tiempo = CalcularTiempoEstadia();
             double tarifa = cochera.getParking().getTarifario(vehiculo.getTipoVehiculo());
             return tarifa * tiempo * cochera.getParking().getFactorDeDemanda();
         } else {

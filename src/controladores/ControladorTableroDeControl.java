@@ -38,7 +38,7 @@ public class ControladorTableroDeControl implements Observador {
 
     private void inicializarVista() {
         vista.mostrarTotalEstadias(modelo.getTotalEstadias());
-        vista.mostrarTotalFacturado(modelo.getSubtotalFacturadoParkings());
+        vista.mostrarTotalFacturado(modelo.getTotalFacturadoParkings());
         vista.actualizarTablaParkings(modelo.getParkings());
         if (monitorearAnomalias) {
             vista.actualizarTablaAnomalias(modelo.getAnomalias());

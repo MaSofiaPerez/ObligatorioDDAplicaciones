@@ -95,7 +95,7 @@ public class Parking extends Observable {
 
     public void actualizarFactorDemanda() {
         LocalDateTime ahora = LocalDateTime.now();
-        int diferenciaUT = calcularDiferenciaUT(ultimaActualizacion, ahora);
+        double diferenciaUT = calcularDiferenciaUT(ultimaActualizacion, ahora);
 
         if (diferenciaUT >= 10) {
             int ingresos = 0;
@@ -140,8 +140,9 @@ public class Parking extends Observable {
 
     }
 
-    private int calcularDiferenciaUT(LocalDateTime inicio, LocalDateTime fin) {
-        return (int) ChronoUnit.MINUTES.between(inicio, fin);
+    private double calcularDiferenciaUT(LocalDateTime inicio, LocalDateTime fin) {
+        
+         return ChronoUnit.SECONDS.between(inicio, fin);
     }
 
     public void agregarEstadia(Vehiculo vehiculo, Cochera cochera) {
@@ -252,21 +253,20 @@ public class Parking extends Observable {
     public ArrayList<Anomalia> getAnomalias() {
         ArrayList<Anomalia> anomalias = new ArrayList();
         for (Cochera c : cocheras) {
-            anomalias = c.getAnomalias();
+            if (!c.getAnomalias().isEmpty()) {
+                anomalias = c.getAnomalias();
+            }
         }
         return anomalias;
     }
 
-    public void cambiarPrecioUT(Tarifario tarifarioSeleccionado, double nuevoPrecio){
-            for(Tarifario t: tarifarios)
-            {
-                if(t.getTipoVehiculo().equals(tarifarioSeleccionado.getTipoVehiculo())){
-                    t.setValorHora(nuevoPrecio);
-                }
+    public void cambiarPrecioUT(Tarifario tarifarioSeleccionado, double nuevoPrecio) {
+        for (Tarifario t : tarifarios) {
+            if (t.getTipoVehiculo().equals(tarifarioSeleccionado.getTipoVehiculo())) {
+                t.setValorHora(nuevoPrecio);
             }
+        }
 
     }
-
-    
 
 }

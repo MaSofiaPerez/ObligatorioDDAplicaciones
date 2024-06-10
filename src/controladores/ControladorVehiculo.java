@@ -19,5 +19,15 @@ public class ControladorVehiculo {
         vehiculos.add(v);
     }
 
+    public Vehiculo getVehiculo(String patente) {
+        for(Vehiculo v: vehiculos){
+            if(v.getPatente().equals(patente)){
+                return v;
+            }
+        }
+        return null;
+    }
+    
+
 
 }

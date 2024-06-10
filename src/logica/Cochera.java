@@ -72,13 +72,13 @@ public class Cochera implements Estacionable {
         etiquetas.add(e);
     }
 
-    public double getFacturaEstadias() {
+  /*  public double getFacturaEstadias() {
         int ret = 0;
         for (Estadia e : estadias) {
             ret += e.calcularSubTotalFacturado();
         }
         return ret;
-    }
+    }*/
 
     @Override
     public boolean esDiscapacitado() {

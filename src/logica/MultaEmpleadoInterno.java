@@ -9,7 +9,7 @@ public class MultaEmpleadoInterno implements CalculoMulta {
     @Override
     public double calcularmulta(Estadia estadia) {
         if (estadia.getCochera().esEmpleado() && !estadia.getVehiculo().esEmpleado()) {
-            double tiempo = estadia.CalcularTiempoEstadiaEnMinutos();
+            double tiempo = estadia.CalcularTiempoEstadia();
             return (tiempo / 10) * costoPor10UT;
         }
         return 0;

@@ -369,7 +369,9 @@ public class DialogoTableroDeControl extends javax.swing.JFrame implements Vista
             model.addRow(new Object[]{
                 a.getFechaYHora(),
                 a.getEstadia().getVehiculo().getPropietario().getNombreCompleto(),
-                a.getCodigoError(),});
+                a.getCodigoError(),
+                a.getEstadia().getCochera().getCodigo()
+            });
         }
     }
 

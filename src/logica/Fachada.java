@@ -7,8 +7,7 @@ import controladores.ControladorTipoVehiculo;
 import exceptions.NuevoValorDemasiadoAltoException;
 import exceptions.NuevoValorNegativoException;
 import java.util.ArrayList;
-import observer.Observable;
-import observer.Observador;
+
 
 public class Fachada {
 
@@ -63,7 +62,7 @@ public class Fachada {
         return controladorParking.getTotalEstadias();
     }
     
-    public double getSubtotalFacturadoParkings(){
+    public double getTotalFacturadoParkings(){
         return controladorParking.getTotalFacturado();
     }
 
@@ -73,6 +72,16 @@ public class Fachada {
 
     public void cambiarPrecioUT(Tarifario tarifarioSeleccionado, double nuevoPrecio, Parking parking) throws NuevoValorDemasiadoAltoException, NuevoValorNegativoException{
         controladorParking.cambiarPrecioUT(tarifarioSeleccionado, nuevoPrecio, parking);
+    }
+    public Vehiculo getVehiculo(String patente){
+        return controladorVehiculo.getVehiculo(patente);
+    }
+    public void ingresarVehiculo(String codigoCochera, Vehiculo v){
+        controladorParking.ingresar(codigoCochera, v);
+    }
+    
+    public void egresarVehiculo(String nroCochera, Vehiculo v){
+        controladorParking.egresar(nroCochera, v);
     }
 
     

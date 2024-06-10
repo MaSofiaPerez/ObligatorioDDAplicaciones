@@ -12,6 +12,7 @@ import logica.Cochera;
 import logica.Parking;
 import logica.Tarifario;
 import logica.TipoVehiculo;
+import logica.Vehiculo;
 
 /**
  *
@@ -43,29 +44,15 @@ public class ControladorParking {
 
     public double getTotalFacturado() {
         double ret = 0;
-
-        for (int i = 0; i < parkings.size(); i++) {
-            Parking p = parkings.get(i);
-            if (!p.getCocheras().isEmpty()) {
-                for (int f = 0; f < p.getCocheras().size(); f++) {
-                    Cochera c = p.getCocheras().get(f);
-                    if (!c.getEstadias().isEmpty()) {
-                        ret += c.getFacturaEstadias();
-                    }
-                }
+        
+        for(Parking p: parkings){
+            for(Cochera c: p.getCocheras()){
+                ret+=c.getSubtotal();
             }
         }
         return ret;
-
-        /*int ret = 0;
-        for (Parking p : parkings) {
-            for (Cochera c : p.getCocheras()) {
-                ret += c.getFacturaEstadias();
-            }
-        }
-        return ret;*/
     }
-
+   
     public double getSubTotalFacturado(Parking p) {
         return p.getSubtotal();
     }
@@ -73,7 +60,7 @@ public class ControladorParking {
     public ArrayList<Anomalia> getAnomalias() {
         ArrayList<Anomalia> anomalias = new ArrayList();
         for (Parking p : parkings) {
-            anomalias = p.getAnomalias();
+            anomalias.addAll(anomalias);
         }
         return anomalias;
     }
@@ -108,6 +95,27 @@ public class ControladorParking {
             throw new NuevoValorDemasiadoAltoException(doblePromedio);
         }else if(nuevoPrecio < 0){
             throw new NuevoValorNegativoException();
+        }
+    }
+
+    public void ingresar(String nroCochera, Vehiculo v) {
+        for(Parking p: parkings){
+           for(Cochera c:p.getCocheras()){
+               if(c.getCodigo().equals(nroCochera)){
+                   p.agregarEstadia(v, c);
+               }
+           }
+        }
+    }
+   
+
+    public void egresar(String nroCochera, Vehiculo v) {
+         for(Parking p: parkings){
+           for(Cochera c:p.getCocheras()){
+               if(c.getCodigo().equals(nroCochera)){
+                   p.cerrarEstadia(v, c);
+               }
+           }
         }
     }
 
