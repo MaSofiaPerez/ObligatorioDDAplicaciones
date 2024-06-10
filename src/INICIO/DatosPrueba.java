@@ -61,7 +61,6 @@ public class DatosPrueba {
         ArrayList<Cochera> cocherasP1 = generarCocheraAleatoria(etiquetas, 80);
         ArrayList<Cochera> cocherasP2 = generarCocheraAleatoria(etiquetas, 80);
 
-        // verificarEtiquetasCocheras(cocherasP1);
         parking1.setCocheras(cocherasP1);
         parking2.setCocheras(cocherasP2);
 
@@ -200,7 +199,7 @@ public class DatosPrueba {
         Random random = new Random();
         Set<String> codigosUsados = new HashSet<>();
 
-        // Asegurar que todas las etiquetas se usen al menos una vez
+        // Aseguramos que todas las etiquetas se usen al menos una vez
         for (Etiqueta etiqueta : etiquetas) {
             String codigoCochera;
             do {
@@ -213,10 +212,10 @@ public class DatosPrueba {
             cocheras.add(cochera);
         }
 
-        // Calcular el número de cocheras que deben tener al menos una etiqueta (20%)
+        // El 20% de las cocheras que tienen que tener etiquetas
         int cocherasConEtiqueta = (int) Math.ceil(cantidad * 0.2);
 
-        // Asignar etiquetas aleatoriamente al resto del 20% de las cocheras
+        // Asignamos etiquetas aleatoriamente
         while (cocheras.size() < cocherasConEtiqueta) {
             String codigoCochera;
             do {
@@ -226,7 +225,7 @@ public class DatosPrueba {
             codigosUsados.add(codigoCochera);
             Cochera cochera = new Cochera(codigoCochera);
 
-            // Asignar una o dos etiquetas de forma aleatoria
+            // Asignamos una o dos etiquetas 
             int numeroEtiquetas = random.nextInt(2) + 1; // 1 o 2 etiquetas
             for (int i = 0; i < numeroEtiquetas; i++) {
                 Etiqueta etiqueta = etiquetas.get(random.nextInt(etiquetas.size()));
@@ -237,7 +236,7 @@ public class DatosPrueba {
             cocheras.add(cochera);
         }
 
-        // Rellenar el resto de las cocheras sin etiquetas
+        //Completamos el resto de las cocheras sin etiquetas
         while (cocheras.size() < cantidad) {
             String codigoCochera;
             do {
@@ -276,9 +275,7 @@ public class DatosPrueba {
         String caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         StringBuilder patente = new StringBuilder();
         Random random = new Random();
-        // Generar una patente de 7 caracteres
         for (int i = 0; i < 7; i++) {
-            // Seleccionar un carácter aleatorio del conjunto de caracteres
             char caracter = caracteres.charAt(random.nextInt(caracteres.length()));
             patente.append(caracter);
         }

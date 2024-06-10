@@ -123,7 +123,7 @@ public class Estadia {
 
     public double calcularMultas() {
         double total = 0;
-        if (multas.size() != 0) {
+        if (!multas.isEmpty()) {
             for (Multa m : multas) {
                 total += m.calcularMulta(this);
             }
