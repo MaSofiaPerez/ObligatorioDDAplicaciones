@@ -264,7 +264,7 @@ public class Parking extends Observable {
         ArrayList<Anomalia> anomalias = new ArrayList();
         for (Cochera c : cocheras) {
             if (!c.getAnomalias().isEmpty()) {
-                anomalias = c.getAnomalias();
+                anomalias.addAll(c.getAnomalias());
             }
         }
         return anomalias;

@@ -58,7 +58,7 @@ public class ControladorParking {
     public ArrayList<Anomalia> getAnomalias() {
         ArrayList<Anomalia> anomalias = new ArrayList();
         for (Parking p : parkings) {
-            anomalias.addAll(anomalias);
+            anomalias.addAll(p.getAnomalias());
         }
         return anomalias;
     }
