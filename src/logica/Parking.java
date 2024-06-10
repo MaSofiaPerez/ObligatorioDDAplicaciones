@@ -141,8 +141,8 @@ public class Parking extends Observable {
     }
 
     private double calcularDiferenciaUT(LocalDateTime inicio, LocalDateTime fin) {
-        
-         return ChronoUnit.SECONDS.between(inicio, fin);
+
+        return ChronoUnit.SECONDS.between(inicio, fin);
     }
 
     public void agregarEstadia(Vehiculo vehiculo, Cochera cochera) {
@@ -168,9 +168,12 @@ public class Parking extends Observable {
             if (e.getVehiculo().getPatente().equals(vehiculo.getPatente())) {
                 e.setFechaYHoraSalida(LocalDateTime.now());
                 e.procesarEgreso();
+
             } else {
                 Anomalia anomaliaTransportador1 = new Anomalia("TRANSPORTADOR1", new Date(), e);
-                e.agregarAnomalia(anomaliaTransportador1);
+                if (e.agregarAnomalia(anomaliaTransportador1)) {
+                    avisar(Eventos.INGRESO_ANOMALIA);
+                }
                 e.setVehiculo(vehiculo);
                 Anomalia anomaliaTransportador2 = new Anomalia("TRANSPORTADOR2", new Date(), e);
                 if (e.agregarAnomalia(anomaliaTransportador2)) {
@@ -185,7 +188,7 @@ public class Parking extends Observable {
             if (e.agregarAnomalia(anomaliaMistery)) {
                 avisar(Eventos.INGRESO_ANOMALIA);
 
-            };
+            }
         }
         actualizarFactorDemanda();
         avisar(Eventos.EGRESO_VEHICULO);
@@ -201,6 +204,10 @@ public class Parking extends Observable {
             }
         }
         return ret;
+    }
+    
+    public double getTotalFacturado(){
+        return getSubtotal() + getSubtotalMultas();
     }
 
     public int getCocheras(boolean estaLibre) {
@@ -243,9 +250,12 @@ public class Parking extends Observable {
     }
 
     public double getSubtotalMultas() {
-        int ret = 0;
+        double ret = 0;
         for (Cochera c : cocheras) {
-            c.getSubtotalMultas();
+            if (!c.getEstadias().isEmpty()) {
+                ret += c.getSubtotalMultas();
+
+            }
         }
         return ret;
     }

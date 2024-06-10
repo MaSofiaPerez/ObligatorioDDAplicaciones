@@ -4,7 +4,6 @@
  */
 package INICIO;
 
-import iu.DatosPrueba;
 import iu.DialogoTableroDeControl;
 import iu.VentanaInicio;
 

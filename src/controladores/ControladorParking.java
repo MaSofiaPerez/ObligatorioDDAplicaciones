@@ -46,9 +46,7 @@ public class ControladorParking {
         double ret = 0;
         
         for(Parking p: parkings){
-            for(Cochera c: p.getCocheras()){
-                ret+=c.getSubtotal();
-            }
+           ret +=  p.getTotalFacturado();
         }
         return ret;
     }

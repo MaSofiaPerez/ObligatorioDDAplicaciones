@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package iu;
+package INICIO;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,6 +21,7 @@ import simuladortransito.Estacionable;
 import simuladortransito.FlujoEgreso;
 import simuladortransito.FlujoIngreso;
 import simuladortransito.Modo;
+import simuladortransito.PerfilEgreso;
 import simuladortransito.PerfilIngreso;
 import simuladortransito.Periodo;
 import simuladortransito.Sensor;
@@ -96,25 +97,26 @@ public class DatosPrueba {
         parking2.setTarifarios(tarifarios);
 
         //1.Configurar simulador
-        ArrayList<Transitable> vehiculosTransitables = generarVehiculos(100);
-        ArrayList<Estacionable> cocheras = generarCocheras(50);
+        ArrayList<Transitable> vehiculosTransitables = generarVehiculos(200);
+        ArrayList<Estacionable> cocheras = generarCocheras(100);
 
         simulador = SimuladorTransito.getInstancia();
         simulador.addTransitables(vehiculosTransitables);
         simulador.addEstacionables(cocheras);
         //2. Programarlo
         try {
-            FlujoIngreso flujo = new FlujoIngreso("Ingreso matutino", new Periodo(0, 10), 30);
+            FlujoIngreso flujo = new FlujoIngreso("Ingreso matutino", new Periodo(10, 10), 30);
             simulador.programar(flujo);
             //FlujoIngreso flujo2 = new FlujoIngreso("Entrada Partido", new Periodo(0, 6), 20);
             // simulador.programar(flujo2);
-            PerfilIngreso perfilAnomalo = new PerfilIngreso.Builder().invadirEstacionableDiscapacitado(Modo.NUNCA)
-                    .invadirEstacionableElectrico(Modo.NUNCA)
-                    .invadirEstacionableEmpleadoInterno(Modo.NUNCA)
-                    .ocuparEstacionableOcupado(Modo.SIEMPRE)
-                    .build();
-            FlujoIngreso flujoAnomalo = new FlujoIngreso("Ingeso con anomalias", new Periodo(10, 10), 5, perfilAnomalo);
-            simulador.programar(flujoAnomalo);
+            PerfilIngreso perfilMultas = new PerfilIngreso.Builder().invadirEstacionableDiscapacitado(Modo.ALEATORIO)
+                    .buildRandom();
+            FlujoIngreso flujoMultas = new FlujoIngreso("Ingeso con multas", new Periodo(0, 5), 15, perfilMultas);
+            simulador.programar(flujoMultas);
+            
+            PerfilIngreso perfilAnomalia = new PerfilIngreso.Builder().ocuparEstacionableOcupado(Modo.ALEATORIO).buildRandom();
+            FlujoIngreso flujoAnomalia = new FlujoIngreso("Ingreso anomalo", new Periodo(5, 8), 10, perfilAnomalia);
+            simulador.programar(flujoAnomalia);
             /*
             FlujoEgreso flujoegreso = new FlujoEgreso("Salida de clases", new Periodo(4, 2), 30);
             simulador.programar(flujoegreso);
@@ -122,12 +124,16 @@ public class DatosPrueba {
             simulador.programar(flujo3);
             FlujoEgreso flujoegreso2 = new FlujoEgreso("Salida de Estadio", new Periodo(8, 3), 80);
             simulador.programar(flujoegreso2);*/
-            FlujoEgreso flujoegreso3 = new FlujoEgreso("Salida de Trabajo", new Periodo(3, 10), 10);
+            FlujoEgreso flujoegreso3 = new FlujoEgreso("Egreso normal", new Periodo(8, 5), 25);
             simulador.programar(flujoegreso3);
+            
+            //PerfilEgreso perfilEgresoAnomalo = new PerfilEgreso.Builder().buildRandom();
+            //FlujoEgreso flujoEgresoAnomalo = new FlujoEgreso("Egreso con anomalias", new Periodo(2,8), 10, perfilEgresoAnomalo);
+            //simulador.programar(flujoEgresoAnomalo);
 
             //TODO: revisar el flujoAnomalo 
-            //TODO: revisar egresos - no muestra los subtotales ni las multas
-            //3. Ejecutarlo  ---- REVISAR SIGUE SIN AGREGAR ESTADIAS AL P2
+            //TODO: revisar egresos - no muestra multas
+            //3. Ejecutarlo  
             simulador.iniciar(new Sensor() {
                 @Override
                 public void ingreso(Transitable transitable, Estacionable estacionable) {
@@ -168,14 +174,6 @@ public class DatosPrueba {
         return ret;
     }
 
-    /*private static void verificarEtiquetasCocheras(ArrayList<Cochera> cocheras) {
-        for (Cochera cochera : cocheras) {
-            System.out.println("Cochera: " + cochera.getCodigo());
-            for (Etiqueta etiqueta : cochera.getEtiquetas()) {
-                System.out.println("  Etiqueta: " + etiqueta.getDescripcion());
-            }
-        }
-    }*/
     private static ArrayList<Estacionable> generarCocheras(int cantidad) {
         Fachada fachada = Fachada.getInstancia();
         ArrayList<Estacionable> ret = new ArrayList<>();

@@ -6,7 +6,8 @@ public class Multa {
 
     private CalculoMulta strategy;
 
-    Multa() {
+    public Multa(CalculoMulta strategy) {
+        this.strategy = strategy;
     }
 
     public double calcularMulta(Estadia e) {

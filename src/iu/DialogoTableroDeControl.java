@@ -325,8 +325,8 @@ public class DialogoTableroDeControl extends javax.swing.JFrame implements Vista
     @Override
     public void verAnomalias() {
         if (jCheckBox1.isSelected()) {
-            tableAnomalias.setVisible(true);
             controladorTablero.iniciarMonitoreoAnomalias();
+            tableAnomalias.setVisible(true);
         } else {
             controladorTablero.detenerMonitoreoAnomalias();
         }

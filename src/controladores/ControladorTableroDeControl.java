@@ -42,7 +42,6 @@ public class ControladorTableroDeControl implements Observador {
         vista.actualizarTablaParkings(modelo.getParkings());
         if (monitorearAnomalias) {
             vista.actualizarTablaAnomalias(modelo.getAnomalias());
-
         }
 
     }

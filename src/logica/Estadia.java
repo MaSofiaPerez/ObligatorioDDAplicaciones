@@ -3,6 +3,8 @@ package logica;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Estadia {
 
@@ -85,23 +87,35 @@ public class Estadia {
                 tarifario = t.getValorHora();
             }
         }
-
         agregarMulta();
         double tiempoestadiaMinutos = CalcularTiempoEstadia();
         double montoFacturado = calcularTotalFacturado(tiempoestadiaMinutos, tarifario);
         this.totalFacturado = montoFacturado;
         cochera.desocupar();
         debitarCuentaCorrientePropietario(montoFacturado);
+
     }
 
     public void agregarMulta() {
 
-        for (Etiqueta eCochera : cochera.getEtiquetas()) {
+        Set<Etiqueta> etiquetasVehiculo = new HashSet<>(vehiculo.getEtiquetas());
+        Set<Etiqueta> etiquetasCochera = new HashSet<>(cochera.getEtiquetas());
 
-            for (Etiqueta eVehiculo : vehiculo.getEtiquetas()) {
-                if (eCochera != eVehiculo) {
-                    multas.add(new Multa());
-                }
+        // Obtener etiquetas que están en el vehículo pero no en la cochera
+        etiquetasCochera.removeAll(etiquetasVehiculo);
+
+        // Agregar una multa por cada etiqueta faltante en la cochera
+        for (Etiqueta etiqueta : etiquetasCochera) {
+            switch (etiqueta.getDescripcion()) {
+                case "Discapacitado":
+                    multas.add(new Multa(new MultaDiscapacitado()));
+                    break;
+                case "Electrico":
+                    multas.add(new Multa(new MultaElectrico()));
+                    break;
+                case "Empleado":
+                    multas.add(new Multa(new MultaEmpleadoInterno()));
+                    break;
             }
         }
 
@@ -146,6 +160,7 @@ public class Estadia {
         boolean agregarOK = false;
         if (anomalias.add(anomalia)) {
             agregarOK = true;
+            anomalia.setEstadia(this);
         }
         return agregarOK;
 

@@ -7,7 +7,7 @@ public class Anomalia {
     private String codigoError;
 
     private Date fechaYHora;
-    
+
     private Estadia estadia;
 
     public Anomalia(String codigoError, Date fechaYHora, Estadia estadia) {
@@ -26,6 +26,10 @@ public class Anomalia {
 
     public Estadia getEstadia() {
         return estadia;
+    }
+
+    void setEstadia(Estadia estadia) {
+        this.estadia = estadia;
     }
 
 }
